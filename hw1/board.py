@@ -5,15 +5,12 @@ class board:
     def __init__(self, size_):
         self.size = size_
 
-    def available_pos(self, pos_x, pos_y):
-        return 0 <= pos_x < self.size and 0 <= pos_y < self.size
-
     def print_pathway(self, path_list):
         ls = []
         for i in range(int(math.pow(self.size, 2))):
             ls.append("  +")
         for i in range(len(path_list)):
-            pos = path_list[i].position
+            pos = path_list[i]
             if i == 0:
                 ls[ pos.y * self.size + pos.x ] = "  S"
             elif i == len(path_list) - 1:
@@ -30,6 +27,7 @@ class board:
             print(ls[i], end="")
             if not (i+1) % self.size:
                 print()
+
 
 class move:
     def __init__(self, move_x = 0, move_y = 0):
@@ -54,6 +52,9 @@ class position:
     def __ne__(self, other):
         return not ( __eq__(self, other) )
 
+    def is_available_pos(self, b):
+        return 0 <= self.x < b.size and 0 <= self.y < b.size
+
     def available_moves(self, b):
         new_pos_list = []
         moves = [move(-1, -2), move(1, -2), move(-2, -1), move(2, -1), move(-2, 1), move(2, 1), move(-1, 2), move(1, 2)]
@@ -61,7 +62,7 @@ class position:
         for mv in moves:
             new_x = self.x + mv.x
             new_y = self.y + mv.y
-            if b.available_pos(new_x, new_y):
+            if self.is_available_pos(b):
                 new_pos_list.append(position(new_x, new_y))
 
         return new_pos_list
@@ -72,4 +73,4 @@ if __name__ == '__main__':
     p = position(5, 5)
     next_p = p.available_moves(b)
     for n in next_p:
-        print(n.x, n.y)
+        print(n)

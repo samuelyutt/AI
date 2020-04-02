@@ -7,7 +7,7 @@ def path_list(goal_node):
     ret = []
     tmp_node = goal_node
     while tmp_node != None:
-        ret.append(tmp_node)
+        ret.append(tmp_node.position)
         tmp_node = tmp_node.parent
     ret.reverse()
     return ret
@@ -15,6 +15,7 @@ def path_list(goal_node):
 
 class agent:
     def __init__(self, start_, goal_):
+        self.node_count = 1
         self.start = start_
         self.goal = goal_
 
@@ -38,11 +39,13 @@ class bfs(agent):
                 if new_pos not in explorered_set:
                     child = node(cur_node, new_pos)
                     cur_node.add_child(child)
+                    self.node_count += 1
                     frontier.put(child)
                     explorered_set.append(new_pos)
                     if new_pos == self.goal:
                         return path_list(child)                        
         return []
+
 
 class dfs(agent):
     def __init__(self, start_, goal_):
@@ -63,6 +66,7 @@ class dfs(agent):
                     child = node(cur_node, new_pos)
                     cur_node.add_child(child)
                     frontier.append(child)
+                    self.node_count += 1
                     explorered_set.append(new_pos)
                     if new_pos == self.goal:
                         return path_list(child)
@@ -74,9 +78,12 @@ if __name__ == '__main__':
     p_start = position(0, 0)
     p_goal = position(2, 2)
 
-    path = bfs(p_start, p_goal).search(b)
-    # print(path)
-    # b.print_pathway(path)
-
-    path = dfs(p_start, p_goal).search(b)
+    a = bfs(p_start, p_goal)
+    path = a.search(b)
     b.print_pathway(path)
+    print(a.node_count)
+
+    a = dfs(p_start, p_goal)
+    path= a.search(b)
+    b.print_pathway(path)
+    print(a.node_count)
