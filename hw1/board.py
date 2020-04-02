@@ -44,7 +44,7 @@ class position:
         return ("({}, {})" .format(str(self.x), str(self.y)))
 
     def __repr__(self):
-        return self.__repr__
+        return self.__str__
 
     def __eq__(self, other):
         return self.x == other.x and self.y == other.y
