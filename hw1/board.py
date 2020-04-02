@@ -1,6 +1,35 @@
-global size
+import math
 
-size = 8
+
+class board:
+    def __init__(self, size_):
+        self.size = size_
+
+    def available_pos(self, pos_x, pos_y):
+        return 0 <= pos_x < self.size and 0 <= pos_y < self.size
+
+    def print_pathway(self, path_list):
+        ls = []
+        for i in range(int(math.pow(self.size, 2))):
+            ls.append("  +")
+        for i in range(len(path_list)):
+            pos = path_list[i].position
+            if i == 0:
+                ls[ pos.y * self.size + pos.x ] = "  S"
+            elif i == len(path_list) - 1:
+                ls[ pos.y * self.size + pos.x ] = "  G"
+            else:
+                ls[ pos.y * self.size + pos.x ] = "{: 3}".format(i)
+        print("   ", end="")
+        for i in range(self.size):
+            print("{: 3}".format(i), end="")
+        print()
+        for i in range(int(math.pow(self.size, 2))):
+            if not i % self.size:
+                print("{: 3}".format(int(i/self.size)), end="")
+            print(ls[i], end="")
+            if not (i+1) % self.size:
+                print()
 
 class move:
     def __init__(self, move_x = 0, move_y = 0):
@@ -16,28 +45,31 @@ class position:
     def __str__(self):
         return ("({}, {})" .format(str(self.x), str(self.y)))
 
+    def __repr__(self):
+        return self.__repr__
+
     def __eq__(self, other):
         return self.x == other.x and self.y == other.y
 
     def __ne__(self, other):
         return not ( __eq__(self, other) )
 
-    def available_moves(self):
-        global size
-        new_pos = []
+    def available_moves(self, b):
+        new_pos_list = []
         moves = [move(-1, -2), move(1, -2), move(-2, -1), move(2, -1), move(-2, 1), move(2, 1), move(-1, 2), move(1, 2)]
 
         for mv in moves:
             new_x = self.x + mv.x
             new_y = self.y + mv.y
-            if 0 <= new_x < size and 0 <= new_y < size:
-                new_pos.append(position(new_x, new_y))
+            if b.available_pos(new_x, new_y):
+                new_pos_list.append(position(new_x, new_y))
 
-        return new_pos
+        return new_pos_list
 
 
 if __name__ == '__main__':
+    b = board(8)
     p = position(5, 5)
-    next_p = p.available_moves()
+    next_p = p.available_moves(b)
     for n in next_p:
         print(n.x, n.y)

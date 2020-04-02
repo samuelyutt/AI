@@ -9,3 +9,9 @@ class node:
 
 	def add_child(self, child_node):
 		self.childs.append(child_node)
+
+	def __str__(self):
+		return self.position.__str__()
+
+	def __repr__(self):
+		return self.position.__str__()
