@@ -15,7 +15,7 @@ def path_list(goal_node):
 
 class agent:
     def __init__(self, start_, goal_):
-        self.node_count = 1
+        self.node_count = 0
         self.start = start_
         self.goal = goal_
 
@@ -26,6 +26,7 @@ class bfs(agent):
 
     def search(self, b):
         root = node(None, self.start)
+        self.node_count += 1
 
         explorered_set = []
         frontier = queue.Queue(maxsize = -1)
@@ -53,6 +54,7 @@ class dfs(agent):
 
     def search(self, b):
         root = node(None, self.start)
+        self.node_count += 1
 
         explorered_set = []
         frontier = [root]
@@ -73,6 +75,40 @@ class dfs(agent):
         return []
 
 
+class ids(agent):
+    def __init__(self, start_, goal_):
+        super(ids, self).__init__(start_, goal_)
+
+    def search(self, b):
+        depth_limit = -1
+
+        while True:
+            depth_limit += 1
+            
+            root = node(None, self.start, 0)
+            self.node_count += 1
+
+            explorered_set = []
+            frontier = [root]
+            
+            while len(frontier):            
+                cur_node = frontier.pop()
+                if cur_node.depth == depth_limit:
+                    continue
+                possible_moves = cur_node.position.available_moves(b)
+
+                for new_pos in possible_moves:
+                    if new_pos not in explorered_set:
+                        child = node(cur_node, new_pos, cur_node.depth+1)
+                        cur_node.add_child(child)
+                        frontier.append(child)
+                        self.node_count += 1
+                        explorered_set.append(new_pos)
+                        if new_pos == self.goal:
+                            return path_list(child)
+        return []
+
+
 if __name__ == '__main__':
     b = board(8)
     p_start = position(0, 0)
@@ -84,6 +120,11 @@ if __name__ == '__main__':
     print(a.node_count)
 
     a = dfs(p_start, p_goal)
+    path= a.search(b)
+    b.print_pathway(path)
+    print(a.node_count)
+
+    a = ids(p_start, p_goal)
     path= a.search(b)
     b.print_pathway(path)
     print(a.node_count)
