@@ -56,7 +56,7 @@ class position:
         return not ( __eq__(self, other) )
 
     def __lt__(self, other):
-        return self.x < other.x or (self.x >= other.x and self.y < other.y)
+        return self.x < other.x or (self.x == other.x and self.y < other.y)
 
     def is_available_pos(self, b):
         # This function returns True if this position is
