@@ -4,14 +4,13 @@ from board import board
 from board import position
 from tree import node
 
-def heuristic(node, goal):
+def heuristic(pos, goal):
     # This function returns the value of heuristic function
-    pos = node.position    
     return int( (abs(pos.x-goal.x) + abs(pos.y-goal.y)) / 3 )
 
 def estimated_cost(g, node, goal):
     # This function returns the value of estimated cost
-    return g + heuristic(node, goal)
+    return g + heuristic(node.position, goal)
 
 def path_list(goal_node):
     # This function returns a list of positions of the
@@ -39,6 +38,12 @@ class agent:
 class bfs(agent):
     def __init__(self, start_, goal_):
         super(bfs, self).__init__(start_, goal_)
+
+    def __str__(self):
+        return "BFS"
+
+    def __repr__(self):
+        return self.__str__()
 
     def search(self, b):
         # Create the root node
@@ -76,6 +81,12 @@ class dfs(agent):
     def __init__(self, start_, goal_):
         super(dfs, self).__init__(start_, goal_)
 
+    def __str__(self):
+        return "DFS"
+
+    def __repr__(self):
+        return self.__str__()
+
     def search(self, b):
         # Create the root node
         root = node(None, self.start)
@@ -110,6 +121,12 @@ class dfs(agent):
 class ids(agent):
     def __init__(self, start_, goal_):
         super(ids, self).__init__(start_, goal_)
+
+    def __str__(self):
+        return "IDS"
+
+    def __repr__(self):
+        return self.__str__()
 
     def search(self, b):
         # Initial depth limit
@@ -157,6 +174,12 @@ class astar(agent):
     def __init__(self, start_, goal_):
         super(astar, self).__init__(start_, goal_)
 
+    def __str__(self):
+        return "A*"
+
+    def __repr__(self):
+        return self.__str__()
+
     def search(self, b):
         # Create the root node
         root = node(None, self.start, 0)
@@ -196,6 +219,12 @@ class idastar(agent):
     def __init__(self, start_, goal_):
         super(idastar, self).__init__(start_, goal_)
 
+    def __str__(self):
+        return "IDA*"
+
+    def __repr__(self):
+        return self.__str__()
+
     def search(self, b):
         # Initial depth limit
         depth_limit = -1
@@ -233,7 +262,6 @@ class idastar(agent):
                         # Set explored set and frontier
                         pair = (estimated_cost(child.depth, child, self.goal), child)
                         bisect.insort(frontier, pair)
-
                         explorered_set.append(new_pos)
                         
                         # Return when path is found
