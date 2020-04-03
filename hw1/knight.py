@@ -9,7 +9,7 @@ from agent import astar
 from agent import idastar
 
 def usage():
-    print("usage: <algorithm> <starting_x> <starting_y> <goal_x> <goal_y>")
+    print("usage: knight.py <algorithm> <starting_x> <starting_y> <goal_x> <goal_y>")
     print("\t0\tBFS")
     print("\t1\tDFS")
     print("\t2\tIDS")
@@ -58,7 +58,7 @@ def knight(algorithm_type, starting_x, starting_y, goal_x, goal_y):
     print()
 
     # Return the number of expanded nodes
-    return a.node_count
+    return a.expanded_node_count
 
 
 if __name__ == '__main__':
