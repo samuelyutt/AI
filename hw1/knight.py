@@ -17,18 +17,24 @@ def usage():
     print("\t4\tIDA*")
     return
 
+""" This is the main function of the program """
 def knight(algorithm_type, starting_x, starting_y, goal_x, goal_y):
+    # Create a board of size 8
     b = board(8)
 
+    # Set starting position and goal position
     p_start = position(starting_x, starting_y)
     p_goal = position(goal_x, goal_y)
 
+    # Check if the positions are available
     if not p_start.is_available_pos(b) or not p_goal.is_available_pos(b):
         print("position out of board range")
         return
 
+    # Create agent
     a = agent(p_start, p_goal)
     
+    # Classify the type of agent
     if algorithm_type == 0:
         a = bfs(p_start, p_goal)
     elif algorithm_type == 1:
@@ -43,12 +49,15 @@ def knight(algorithm_type, starting_x, starting_y, goal_x, goal_y):
         usage()
         return
 
+    # Search path
     path_list = a.search(b)
 
+    # Print path
     for path in path_list:
         print(path, end="")
     print()
 
+    # Return the number of expanded nodes
     return a.node_count
 
 

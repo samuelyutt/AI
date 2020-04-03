@@ -6,6 +6,9 @@ class board:
         self.size = size_
 
     def print_pathway(self, path_list):
+        # This function prints the path from the starting
+        # position to the goal position on this board
+        # with no return value
         ls = []
         for i in range(int(math.pow(self.size, 2))):
             ls.append("  +")
@@ -52,10 +55,18 @@ class position:
     def __ne__(self, other):
         return not ( __eq__(self, other) )
 
+    def __lt__(self, other):
+        return self.x < other.x or (self.x >= other.x and self.y < other.y)
+
     def is_available_pos(self, b):
+        # This function returns True if this position is
+        # available on the given board; otherwise False
         return 0 <= self.x < b.size and 0 <= self.y < b.size
 
     def available_moves(self, b):
+        # This function returns a list of all possible
+        # positions on the given board after taking 
+        # a single move from this position 
         new_pos_list = []
         moves = [move(-1, -2), move(1, -2), move(-2, -1), move(2, -1), move(-2, 1), move(2, 1), move(-1, 2), move(1, 2)]
 

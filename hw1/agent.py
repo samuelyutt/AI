@@ -4,12 +4,19 @@ from board import board
 from board import position
 from tree import node
 
+def heuristic(node, goal):
+    # This function returns the value of heuristic function
+    pos = node.position    
+    return int( (abs(pos.x-goal.x) + abs(pos.y-goal.y)) / 3 )
+
 def estimated_cost(g, node, goal):
-    pos = node.position
-    heuristic = int( (abs(pos.x-goal.x)+abs(pos.y-goal.y)) / 3 )
-    return g + heuristic
+    # This function returns the value of estimated cost
+    return g + heuristic(node, goal)
 
 def path_list(goal_node):
+    # This function returns a list of positions of the
+    # path moving from starting position to goal position
+    # by order 
     ret = []
     tmp_node = goal_node
     while tmp_node != None:
@@ -31,26 +38,35 @@ class bfs(agent):
         super(bfs, self).__init__(start_, goal_)
 
     def search(self, b):
+        # Create the root node
         root = node(None, self.start)
         self.node_count += 1
 
+        # Initial explored set and frontier
+        # Frontier: queue
         explorered_set = []
         frontier = queue.Queue(maxsize = -1)
         frontier.put(root)
         
-        while not frontier.empty():            
+        while not frontier.empty():
+            # Expand shallowest unexpanded node
             cur_node = frontier.get()
             possible_moves = cur_node.position.available_moves(b)
 
             for new_pos in possible_moves:
                 if new_pos not in explorered_set:
+                    # Create child node and append to parent
                     child = node(cur_node, new_pos)
                     cur_node.add_child(child)
                     self.node_count += 1
+                    
+                    # Set explored set and frontier
                     frontier.put(child)
                     explorered_set.append(new_pos)
+                    
+                    # Return when path is found
                     if new_pos == self.goal:
-                        return path_list(child)                        
+                        return path_list(child)
         return []
 
 
@@ -59,23 +75,32 @@ class dfs(agent):
         super(dfs, self).__init__(start_, goal_)
 
     def search(self, b):
+        # Create the root node
         root = node(None, self.start)
         self.node_count += 1
 
+        # Initial explored set and frontier
+        # Frontier: stack
         explorered_set = []
         frontier = [root]
         
-        while len(frontier):            
+        while len(frontier):
+            # Expand the deepest (most recent) unexpanded node
             cur_node = frontier.pop()
             possible_moves = cur_node.position.available_moves(b)
 
             for new_pos in possible_moves:
                 if new_pos not in explorered_set:
+                    # Create child node and append to parent
                     child = node(cur_node, new_pos)
                     cur_node.add_child(child)
+                    
+                    # Set explored set and frontier
                     frontier.append(child)
                     self.node_count += 1
                     explorered_set.append(new_pos)
+                    
+                    # Return when path is found
                     if new_pos == self.goal:
                         return path_list(child)
         return []
@@ -86,18 +111,25 @@ class ids(agent):
         super(ids, self).__init__(start_, goal_)
 
     def search(self, b):
+        # Initial depth limit
         depth_limit = -1
 
         while True:
+            # Set depth limit
             depth_limit += 1
 
+            # Create the root node
             root = node(None, self.start, 0)
             self.node_count += 1
 
+            # Initial explored set and frontier
+            # Frontier: stack
             explorered_set = []
             frontier = [root]
             
-            while len(frontier):            
+            while len(frontier):
+                # Expand the deepest (most recent) unexpanded node
+                # where depth not greater than depth limit
                 cur_node = frontier.pop()
                 if cur_node.depth == depth_limit:
                     continue
@@ -105,11 +137,16 @@ class ids(agent):
 
                 for new_pos in possible_moves:
                     if new_pos not in explorered_set:
+                        # Create child node and append to parent
                         child = node(cur_node, new_pos, cur_node.depth+1)
                         cur_node.add_child(child)
+                        
+                        # Set explored set and frontier
                         frontier.append(child)
                         self.node_count += 1
                         explorered_set.append(new_pos)
+                        
+                        # Return when path is found
                         if new_pos == self.goal:
                             return path_list(child)
         return []
@@ -120,26 +157,36 @@ class astar(agent):
         super(astar, self).__init__(start_, goal_)
 
     def search(self, b):
+        # Create the root node
         root = node(None, self.start, 0)
         self.node_count += 1
-
+        
+        # Initial explored set and frontier
+        # Frontier: priority queue
         explorered_set = []
         frontier = []
         pair = (estimated_cost(root.depth, root, self.goal), root)
         bisect.insort(frontier, pair)
         
-        while len(frontier):            
+        while len(frontier):
+            # Expand the unexpanded node with the lowest
+            # estimated total path cost
             cur_node = frontier.pop(0)[1]
             possible_moves = cur_node.position.available_moves(b)
 
             for new_pos in possible_moves:
                 if new_pos not in explorered_set:
+                    # Create child node and append to parent
                     child = node(cur_node, new_pos, cur_node.depth+1)
                     cur_node.add_child(child)
+                    
+                    # Set explored set and frontier
                     pair = (estimated_cost(child.depth, child, self.goal), child)
                     bisect.insort(frontier, pair)
                     self.node_count += 1
                     explorered_set.append(new_pos)
+                    
+                    # Return when path is found
                     if new_pos == self.goal:
                         return path_list(child)
         return []
@@ -150,20 +197,28 @@ class idastar(agent):
         super(idastar, self).__init__(start_, goal_)
 
     def search(self, b):
+        # Initial depth limit
         depth_limit = -1
 
         while True:
+            # Set depth limit
             depth_limit += 1
 
+            # Create the root node
             root = node(None, self.start, 0)
             self.node_count += 1
 
+            # Initial explored set and frontier
+            # Frontier: priority queue
             explorered_set = []
             frontier = []
             pair = (estimated_cost(root.depth, root, self.goal), root)
             bisect.insort(frontier, pair)
             
-            while len(frontier):            
+            while len(frontier):   
+                # Expand the unexpanded node with the lowest
+                # estimated total path cost 
+                # where depth not greater than depth limit
                 cur_node = frontier.pop(0)[1]
                 if cur_node.depth == depth_limit:
                     continue
@@ -171,12 +226,17 @@ class idastar(agent):
 
                 for new_pos in possible_moves:
                     if new_pos not in explorered_set:
+                        # Create child node and append to parent
                         child = node(cur_node, new_pos, cur_node.depth+1)
                         cur_node.add_child(child)
+                        
+                        # Set explored set and frontier
                         pair = (estimated_cost(child.depth, child, self.goal), child)
                         bisect.insort(frontier, pair)
                         self.node_count += 1
                         explorered_set.append(new_pos)
+                        
+                        # Return when path is found
                         if new_pos == self.goal:
                             return path_list(child)
         return []

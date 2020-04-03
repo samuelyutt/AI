@@ -15,9 +15,7 @@ class node:
         return self.position.__str__()
 
     def __lt__(self, other):
-        # Used for bisect.insort()
-        # Always return the first object since order of node is unnecessary
-        return self
+        return self.position < other.position
 
     def add_child(self, child_node):
         self.childs.append(child_node)
