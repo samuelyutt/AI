@@ -73,8 +73,9 @@ class position:
         for mv in moves:
             new_x = self.x + mv.x
             new_y = self.y + mv.y
-            if self.is_available_pos(b):
-                new_pos_list.append(position(new_x, new_y))
+            new_pos = position(new_x, new_y)
+            if new_pos.is_available_pos(b):
+                new_pos_list.append(new_pos)
 
         return new_pos_list
 

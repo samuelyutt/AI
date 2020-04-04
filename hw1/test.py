@@ -17,7 +17,8 @@ def algorithm_type():
              (position(0, 0), position(7, 7)), 
              (position(7, 7), position(0, 0)), 
              (position(0, 0), position(0, 1)), 
-             (position(0, 1), position(0, 0))]
+             (position(0, 1), position(0, 0)), 
+             (position(0, 1), position(9, 10))]
     
     for pair in pairs:
         p_start = pair[0]
@@ -26,7 +27,7 @@ def algorithm_type():
         bm = [-1, -1, -1]
 
         print("From", p_start, "to", p_goal)
-        print("Algorithm\tSearch time\t\tSteps\t\tExpanded nodes")
+        print("Algorithm\tSearch time (ms)\tSteps\t\tExpanded nodes")
         for a in agents:
             start_time = time.time()
             path = a.search(b)
@@ -49,10 +50,10 @@ def board_size():
     
     for a in agents:
         print(a)
-        print("Board size\tSearch time\t\tSteps\t\tExpanded nodes")
+        print("Board size\tSearch time (ms)\tSteps\t\tExpanded nodes")
         bm = [-1, -1, -1, -1]
 
-        for b_size in range(3, 16):
+        for b_size in range(3, 17):
             b = board(b_size)
                     
             start_time = time.time()
@@ -70,5 +71,6 @@ def board_size():
 
 
 if __name__ == '__main__':
+    board_size()
     algorithm_type()
     
