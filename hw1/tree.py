@@ -1,3 +1,7 @@
+"""
+    This program defines the tree
+"""
+
 from board import position
 
 

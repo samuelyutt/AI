@@ -1,3 +1,7 @@
+"""
+    This program defines agents of each algorithm
+"""
+
 import math
 import queue
 import bisect
@@ -288,6 +292,7 @@ class idastar(agent):
 
 
 if __name__ == '__main__':
+    # Examples
     b = board(8)
     p_start = position(0, 0)
     p_goal = position(2, 2)

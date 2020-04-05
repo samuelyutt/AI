@@ -1,3 +1,6 @@
+""" 
+    All test results from the report can be shown by running this program
+"""
 import time
 from board import board
 from board import position
@@ -8,7 +11,7 @@ from agent import ids
 from agent import astar
 from agent import idastar
 
-def algorithm_type():
+def algorithm_type_test():
     print("======== Algorithm type comparison ========")
     
     b = board(8)
@@ -41,7 +44,7 @@ def algorithm_type():
             print("{}\t\t{:.6f} ({:.3f})\t{} ({:.3f})\t{} ({:.3f})" .format(a, search_time, search_time/bm[0], steps, steps/bm[1], a.expanded_node_count, a.expanded_node_count/bm[2]))
         print()
 
-def board_size():
+def board_size_test():
     print("======== Board size comparison ========")
     
     p_start = position(0, 0)
@@ -71,6 +74,6 @@ def board_size():
 
 
 if __name__ == '__main__':
-    board_size()
-    algorithm_type()
+    board_size_test()
+    algorithm_type_test()
     

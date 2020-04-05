@@ -1,3 +1,7 @@
+"""
+    This program defines the framwork of the board
+"""
+
 import math
 
 
@@ -81,6 +85,7 @@ class position:
 
 
 if __name__ == '__main__':
+    # Examples
     b = board(8)
     p = position(5, 5)
     next_p = p.available_moves(b)

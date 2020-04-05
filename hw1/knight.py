@@ -1,3 +1,13 @@
+"""
+    This is the main program
+    Usage: knight.py <algorithm> <starting_x> <starting_y> <goal_x> <goal_y>
+        0   BFS
+        1   DFS
+        2   IDS
+        3   A*
+        4   IDA*
+"""
+
 import sys
 from board import board
 from board import position
