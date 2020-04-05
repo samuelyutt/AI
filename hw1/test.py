@@ -9,16 +9,16 @@ from agent import astar
 from agent import idastar
 
 def algorithm_type():
-    print("======== Algorithm type comparision ========")
+    print("======== Algorithm type comparison ========")
     
     b = board(8)
-    pairs = [(position(0, 0), position(2, 2)), 
-             (position(2, 2), position(0, 0)), 
+    pairs = [(position(2, 2), position(4, 4)), 
+             (position(4, 4), position(2, 2)), 
              (position(0, 0), position(7, 7)), 
              (position(7, 7), position(0, 0)), 
              (position(0, 0), position(0, 1)), 
              (position(0, 1), position(0, 0)), 
-             (position(0, 1), position(9, 10))]
+             (position(0, 0), position(9, 10))]
     
     for pair in pairs:
         p_start = pair[0]
@@ -35,14 +35,14 @@ def algorithm_type():
             steps = len(path) - 1
 
             bm[0] = search_time if bm[0] == -1 else bm[0]
-            bm[1] = steps if bm[1] == -1 else bm[1]
-            bm[2] = a.expanded_node_count if bm[2] == -1 else bm[2]
+            bm[1] = steps if bm[1] == -1 and steps != 0 else bm[1]
+            bm[2] = a.expanded_node_count if bm[2] == -1 and a.expanded_node_count else bm[2]
 
             print("{}\t\t{:.6f} ({:.3f})\t{} ({:.3f})\t{} ({:.3f})" .format(a, search_time, search_time/bm[0], steps, steps/bm[1], a.expanded_node_count, a.expanded_node_count/bm[2]))
         print()
 
 def board_size():
-    print("======== Board size comparision ========")
+    print("======== Board size comparison ========")
     
     p_start = position(0, 0)
     p_goal = position(2, 2)
@@ -63,8 +63,8 @@ def board_size():
 
             bm[0] = b_size if bm[0] == -1 else bm[0]
             bm[1] = search_time if bm[1] == -1 else bm[1]
-            bm[2] = steps if bm[2] == -1 else bm[2]
-            bm[3] = a.expanded_node_count if bm[3] == -1 else bm[3]
+            bm[2] = steps if bm[2] == -1 and steps != 0 else bm[2]
+            bm[3] = a.expanded_node_count != 0 if bm[3] == -1 and a.expanded_node_count else bm[3]
 
             print("{} ({:.3f})\t{:.6f} ({:.3f})\t{} ({:.3f})\t{} ({:.3f})" .format(b_size, b_size/bm[0], search_time, search_time/bm[1], steps, steps/bm[2], a.expanded_node_count, a.expanded_node_count/bm[3]))
         print()
