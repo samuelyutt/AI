@@ -39,7 +39,7 @@ def knight(algorithm_type, starting_x, starting_y, goal_x, goal_y):
     # Check if the positions are available
     if not p_start.is_available_pos(b) or not p_goal.is_available_pos(b):
         print("position out of board range")
-        return
+        return -1
 
     # Create agent
     a = agent(p_start, p_goal)
@@ -57,7 +57,7 @@ def knight(algorithm_type, starting_x, starting_y, goal_x, goal_y):
         a = idastar(p_start, p_goal)
     else:
         usage()
-        return
+        return -1
 
     # Search path
     path_list = a.search(b)
