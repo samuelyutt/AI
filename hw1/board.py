@@ -1,5 +1,5 @@
 """
-    This program defines the framwork of the board
+    This program defines the framework of the board
 """
 
 import math
