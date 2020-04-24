@@ -25,21 +25,26 @@ class Agent():
             # Expand the deepest (most recent) unexpanded node
             cur_node = frontier.pop()
 
+            # current = cur_node.board_status(b)
+            # print(current)
+            # for explorered in explorered_set:
+            #     if current == explorered:
+            #         print(564161)
+            #         break
+            # if current in explorered_set:
+            #     print(current)
+            #     continue
+            # else:
+            #     explorered_set.append(current)
+
             # Return when solution is found
             cc = cur_node.consistency_check(b)
             if cc < 0:
                 continue
-            elif cc == 0:
-                if len(cur_node.unas_vrbls) == 0:
-                    return cur_node
-            if len(cur_node.unas_vrbls) == 0:
+            elif cc == 0 and len(cur_node.unas_vrbls) == 0:
+                return cur_node
+            elif len(cur_node.unas_vrbls) == 0:
                 continue
-
-            current = b.current_board(cur_node.asgn_vrbls)
-            if current in explorered_set:
-                continue
-            else:
-                explorered_set.append(current)
             
             # Choose a variable to expand
             sltd_vrbl = cur_node.unas_vrbls.pop()
@@ -61,6 +66,8 @@ if __name__ == '__main__':
                    '6 6 10 -1 -1 -1 -1 -1 -1 -1 2 2 2 3 -1 -1 2 0 0 2 -1 -1 2 0 0 2 -1 -1 3 2 2 2 -1 -1 -1 -1 -1 -1 -1', 
                    '6 6 10 -1 1 -1 1 1 -1 2 2 3 -1 -1 1 -1 -1 5 -1 5 -1 2 -1 5 -1 -1 -1 -1 2 -1 -1 3 -1 -1 -1 1 1 -1 0']
     
+    # inputs_list = ['6 6 10 -1 -1 -1 1 1 -1 -1 3 -1 -1 -1 0 2 3 -1 3 3 2 -1 -1 2 -1 -1 -1 -1 2 2 3 -1 3 -1 1 -1 -1 -1 1']
+    # inputs_list = ['6 6 10 -1 -1 -1 -1 -1 -1 -1 2 2 2 3 -1 -1 2 0 0 2 -1 -1 2 0 0 2 -1 -1 3 2 2 2 -1 -1 -1 -1 -1 -1 -1']
     for inputs in inputs_list:
         b = Board(inputs)
         a = Agent()

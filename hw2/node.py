@@ -12,6 +12,18 @@ class Node():
     def add_child(self, child_node):
         self.childs.append(child_node)
 
+    def board_status(self, b):
+        status = []
+        for i in range(b.size_x * b.size_y):
+            status.append(9)
+        for variable in self.asgn_vrbls:
+            status[variable.position[1] * b.size_x + variable.position[0]] = variable.assignment
+        ret = ''
+        for s in status:
+            ret += str(s)
+
+        return ret
+
     def all_arc_consistent_check(self, b):
         acc_count = 0
         for j in range(b.size_y):
