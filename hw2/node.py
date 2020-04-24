@@ -21,7 +21,6 @@ class Node():
         ret = ''
         for s in status:
             ret += str(s)
-
         return ret
 
     def all_arc_consistent_check(self, b):

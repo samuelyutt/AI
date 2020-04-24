@@ -25,17 +25,10 @@ class Agent():
             # Expand the deepest (most recent) unexpanded node
             cur_node = frontier.pop()
 
-            # current = cur_node.board_status(b)
-            # print(current)
-            # for explorered in explorered_set:
-            #     if current == explorered:
-            #         print(564161)
-            #         break
-            # if current in explorered_set:
-            #     print(current)
-            #     continue
-            # else:
-            #     explorered_set.append(current)
+            current = cur_node.board_status(b)
+            if current in explorered_set:
+                continue
+            explorered_set.append(current)
 
             # Return when solution is found
             cc = cur_node.consistency_check(b)
@@ -45,7 +38,44 @@ class Agent():
                 return cur_node
             elif len(cur_node.unas_vrbls) == 0:
                 continue
-            
+
+            # Forward checking
+            fc_err = 0
+            is_mine_pos = []
+            no_mine_pos = []
+            if cur_node.last_sltd_vrbl is not None:
+                check_pos = b.around_position(cur_node.last_sltd_vrbl.position)
+                for pos in check_pos:
+                    hint = b.hints[pos[0]][pos[1]]
+                    if hint > -1:
+                        lower_bound, upper_bound = b.forward_checking_limit(cur_node.asgn_vrbls, pos)
+                        if lower_bound > hint or upper_bound < hint:
+                            fc_err = 1
+                            break
+                        elif lower_bound == hint:
+                            no_mine_pos += b.around_position(pos)
+                        elif upper_bound == hint:
+                            is_mine_pos += b.around_position(pos)
+            if fc_err:
+                continue
+            else:
+                for variable in cur_node.unas_vrbls:
+                    pos = variable.position
+                    if (pos[0], pos[1]) in no_mine_pos:
+                        try:
+                            variable.domain.remove(1)
+                        except:
+                            pass
+                    if (pos[0], pos[1]) in is_mine_pos:
+                        try:
+                            variable.domain.remove(0)
+                        except:
+                            pass                    
+                    if len(variable.domain) == 0:
+                        fc_err = 1
+                        break
+            if fc_err:
+                continue
             # Choose a variable to expand
             sltd_vrbl = cur_node.unas_vrbls.pop()
 
@@ -72,7 +102,8 @@ if __name__ == '__main__':
         b = Board(inputs)
         a = Agent()
         result = a.search(b)
-        b.print_board(result.asgn_vrbls)
+        if result != None:
+            b.print_board(result.asgn_vrbls)
         print()
 
         

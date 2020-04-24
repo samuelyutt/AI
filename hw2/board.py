@@ -49,6 +49,19 @@ class Board():
                 current[i][j] = '_' if current[i][j] == -1 else current[i][j]
                 print(current[i][j], end=" ")
             print()
+    
+    def forward_checking_limit(self, asgn_vrbls, position):
+        current = self.current_board(asgn_vrbls)
+        lower_bound = 0
+        upper_bound = 0
+        around = self.around_position(position)
+        for a in around:
+            if current[a[0]][a[1]] == '*':
+                lower_bound += 1
+                upper_bound += 1
+            elif current[a[0]][a[1]] == -1:
+                upper_bound += 1
+        return lower_bound, upper_bound
 
     def arc_consistent_check(self, asgn_vrbls, position):
         x = position[0]
