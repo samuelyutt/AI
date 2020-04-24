@@ -18,46 +18,59 @@ class Board():
                 self.hints[j].append(int(args[idx]))
                 idx += 1
 
-    def current_board(self, variables = []):
+    def available_position(self, position):
+        return 0 <= position[0] < self.size_x and 0 <= position[1] < self.size_y
+
+    def around_position(self, position):
+        x = position[0]
+        y = position[1]
+        psb_pos = [(x-1, y-1), (x, y-1), (x+1, y-1), 
+                   (x-1, y),             (x+1, y), 
+                   (x-1, y+1), (x, y+1), (x+1, y+1)]
+        around = []
+        for pos in psb_pos:
+            if self.available_position(pos):
+                around.append(pos)
+        return around
+
+    def current_board(self, asgn_vrbls = []):
         current = copy.deepcopy(self.hints)
-        for variable in variables:
-            x = variable.x
-            y = variable.y
-            current[x][y] = '_' if variable.assignment == -1 else current[x][y]
+        for variable in asgn_vrbls:
+            x = variable.position[0]
+            y = variable.position[1]
             current[x][y] = '|' if variable.assignment == 0 else current[x][y]
             current[x][y] = '*' if variable.assignment == 1 else current[x][y]
         return current
 
-    def print_board(self, variables = []):
-        current = self.current_board(variables)
+    def print_board(self, asgn_vrbls = []):
+        current = self.current_board(asgn_vrbls)
         for j in range(self.size_y):
             for i in range(self.size_x):
+                current[i][j] = '_' if current[i][j] == -1 else current[i][j]
                 print(current[i][j], end=" ")
             print()
 
-    def arc_consistent_check(self, variables, position):
+    def arc_consistent_check(self, asgn_vrbls, position):
         x = position[0]
         y = position[1]
-        
+        if not self.available_position(position):
+            return 0
         if self.hints[x][y] == -1:
-            return 9
+            return 0
         
-        current = self.current_board(variables)
+        current = self.current_board(asgn_vrbls)
         
         bombs_count = 0
-        around = [(x-1, y-1), (x, y-1), (x+1, y-1), 
-                  (x-1, y),             (x+1, y), 
-                  (x-1, y+1), (x, y+1), (x+1, y+1)]
+        around = self.around_position(position)
         for a in around:
-            if 0 <= a[0] < self.size_x and 0 <= a[1] < self.size_y:
-                if current[a[0]][a[1]] == '*':
-                    bombs_count += 1
+            if current[a[0]][a[1]] == '*':
+                bombs_count += 1
 
         return self.hints[x][y] - bombs_count
 
-    def global_constraint_check(self, variables):
+    def global_constraint_check(self, asgn_vrbls):
         mines_count = 0
-        for variable in variables:
+        for variable in asgn_vrbls:
             if variable.assignment == 1:
                 mines_count += 1
 
