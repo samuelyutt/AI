@@ -83,18 +83,35 @@ class Node():
 
     def mrv(self, sort_bound):
         sort_count = 0
-        single = []
-        multiple = []
+        groups = [[], []]
         for i in range(len(self.unas_vrbls) - sort_bound, len(self.unas_vrbls)):
             variable = self.unas_vrbls[i]
             if len(variable.domain) == 1:
-                single.append(variable)
+                groups[0].append(variable)
                 sort_count += 1
             else:
-                multiple.append(variable)
-        self.unas_vrbls = multiple + single
+                groups[1].append(variable)
+        self.unas_vrbls = groups[1] + groups[0]
         sort_count = sort_bound if sort_count == 0 else sort_count
         return sort_count
+
+    def dh(self, sort_bound, b):
+        groups = [[], [], [], [], [], [], [], [], []]
+        current = b.current_board(self.asgn_vrbls)
+        for i in range(len(self.unas_vrbls) - sort_bound, len(self.unas_vrbls)):
+            variable = self.unas_vrbls[i]
+            around = b.around_position(variable.position)
+            degree = 0
+            for a in around:
+                if current[a[0]][a[1]] == -1:
+                    degree += 1
+            groups[degree].append(variable)
+
+        sort_vrbls = []
+        for group in groups[::-1]:
+            sort_vrbls += group
+        self.unas_vrbls = self.unas_vrbls[0:len(self.unas_vrbls) - sort_bound] + sort_vrbls
+        return sort_bound
 
 
 if __name__ == '__main__':

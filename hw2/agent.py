@@ -60,7 +60,7 @@ class Agent():
                 # print(sort_count)
                 # print()
             if self.dh:
-                sort_count = cur_node.dh(sort_count)
+                sort_count = cur_node.dh(sort_count, b)
             if self.lcv:
                 cur_node.lcv(sort_count)
             
@@ -87,7 +87,7 @@ if __name__ == '__main__':
     # inputs_list = ['6 6 10 -1 -1 -1 1 1 -1 -1 3 -1 -1 -1 0 2 3 -1 3 3 2 -1 -1 2 -1 -1 -1 -1 2 2 3 -1 3 -1 1 -1 -1 -1 1']
     # inputs_list = ['6 6 10 -1 -1 -1 -1 -1 -1 -1 2 2 2 3 -1 -1 2 0 0 2 -1 -1 2 0 0 2 -1 -1 3 2 2 2 -1 -1 -1 -1 -1 -1 -1']
     
-    a = Agent(mrv = True)
+    a = Agent(mrv = True, dh = True)
     for inputs in inputs_list:
         b = Board(inputs)
         result = a.search(b)
