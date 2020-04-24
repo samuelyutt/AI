@@ -47,13 +47,54 @@ class Node():
 
         return gcc_count + all_acc_count
 
-    def is_solution(self, b):
-        if len(self.unas_vrbls) == 0:
-            return False
-        if self.consistency_check(b) == 0:
-            return True
-        else:
-            return False
+    def forward_checking(self, b, position):
+        fc_err = 0
+        is_mine_pos = []
+        no_mine_pos = []
+        check_pos = b.around_position(position)
+        for pos in check_pos:
+            hint = b.hints[pos[0]][pos[1]]
+            if hint > -1:
+                lower_bound, upper_bound = b.forward_checking_limit(self.asgn_vrbls, pos)
+                if lower_bound > hint or upper_bound < hint:
+                    fc_err = -1
+                    break
+                elif lower_bound == hint:
+                    no_mine_pos += b.around_position(pos)
+                elif upper_bound == hint:
+                    is_mine_pos += b.around_position(pos)
+        if not fc_err:
+            for variable in self.unas_vrbls:
+                pos = variable.position
+                if (pos[0], pos[1]) in no_mine_pos:
+                    try:
+                        variable.domain.remove(1)
+                    except:
+                        pass
+                if (pos[0], pos[1]) in is_mine_pos:
+                    try:
+                        variable.domain.remove(0)
+                    except:
+                        pass                    
+                if len(variable.domain) == 0:
+                    fc_err = -1
+                    break
+        return fc_err
+
+    def mrv(self, sort_bound):
+        sort_count = 0
+        single = []
+        multiple = []
+        for i in range(len(self.unas_vrbls) - sort_bound, len(self.unas_vrbls)):
+            variable = self.unas_vrbls[i]
+            if len(variable.domain) == 1:
+                single.append(variable)
+                sort_count += 1
+            else:
+                multiple.append(variable)
+        self.unas_vrbls = multiple + single
+        sort_count = sort_bound if sort_count == 0 else sort_count
+        return sort_count
 
 
 if __name__ == '__main__':
