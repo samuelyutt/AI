@@ -38,8 +38,10 @@ class Board():
         for variable in asgn_vrbls:
             x = variable.position[0]
             y = variable.position[1]
-            current[x][y] = '|' if variable.assignment == 0 else current[x][y]
-            current[x][y] = '*' if variable.assignment == 1 else current[x][y]
+            if variable.assignment == 0:
+                current[x][y] = -2
+            elif variable.assignment == 1:
+                current[x][y] = -3
         return current
 
     def print_board(self, asgn_vrbls = []):
@@ -47,6 +49,8 @@ class Board():
         for j in range(self.size_y):
             for i in range(self.size_x):
                 current[i][j] = '_' if current[i][j] == -1 else current[i][j]
+                current[i][j] = '|' if current[i][j] == -2 else current[i][j]
+                current[i][j] = '*' if current[i][j] == -3 else current[i][j]
                 print(current[i][j], end=" ")
             print()
     
@@ -56,7 +60,7 @@ class Board():
         upper_bound = 0
         around = self.around_position(position)
         for a in around:
-            if current[a[0]][a[1]] == '*':
+            if current[a[0]][a[1]] == -3:
                 lower_bound += 1
                 upper_bound += 1
             elif current[a[0]][a[1]] == -1:
@@ -76,7 +80,7 @@ class Board():
         bombs_count = 0
         around = self.around_position(position)
         for a in around:
-            if current[a[0]][a[1]] == '*':
+            if current[a[0]][a[1]] == -3:
                 bombs_count += 1
 
         return self.hints[x][y] - bombs_count

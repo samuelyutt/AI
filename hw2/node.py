@@ -12,7 +12,7 @@ class Node():
     def add_child(self, child_node):
         self.childs.append(child_node)
 
-    def board_status(self, b):
+    def board_status_string(self, b):
         status = []
         for i in range(b.size_x * b.size_y):
             status.append(9)
@@ -95,23 +95,43 @@ class Node():
         sort_count = sort_bound if sort_count == 0 else sort_count
         return sort_count
 
-    def dh(self, sort_bound, b):
-        groups = [[], [], [], [], [], [], [], [], []]
-        current = b.current_board(self.asgn_vrbls)
-        for i in range(len(self.unas_vrbls) - sort_bound, len(self.unas_vrbls)):
-            variable = self.unas_vrbls[i]
-            around = b.around_position(variable.position)
-            degree = 0
-            for a in around:
-                if current[a[0]][a[1]] == -1:
-                    degree += 1
-            groups[degree].append(variable)
+    def degree_hrs(self, b, last_sltd_vrbl, sort_bound):
+        sort_count = sort_bound
+        if last_sltd_vrbl is not None:
+            groups = [[], [], [], [], [], [], [], [], []]
+            for i in range(len(self.unas_vrbls) - sort_bound, len(self.unas_vrbls)):
+                variable = self.unas_vrbls[i]                
+                groups[variable.degree].append(variable)
 
-        sort_vrbls = []
-        for group in groups[::-1]:
-            sort_vrbls += group
-        self.unas_vrbls = self.unas_vrbls[0:len(self.unas_vrbls) - sort_bound] + sort_vrbls
-        return sort_bound
+            sort_vrbls = []
+            for group in groups:
+                sort_vrbls += group
+                sort_count = len(group) if len(group) != 0 else sort_count
+            self.unas_vrbls = self.unas_vrbls[0:len(self.unas_vrbls) - sort_bound] + sort_vrbls
+        return sort_count
+
+    def space_hrs(self, b, last_sltd_vrbl, sort_bound):
+        sort_count = sort_bound
+        if last_sltd_vrbl is not None:
+            # Update space degree
+            around = b.around_position(last_sltd_vrbl.position) 
+            for variable in self.unas_vrbls:
+                if variable.position in around:
+                    variable.degree -= 1
+
+            groups = [[], [], [], [], [], [], [], [], []]
+            for i in range(len(self.unas_vrbls) - sort_bound, len(self.unas_vrbls)):
+                variable = self.unas_vrbls[i]                
+                groups[variable.degree].append(variable)
+
+            sort_vrbls = []
+
+            # Reverse order
+            for group in groups[::-1]:
+                sort_vrbls += group
+                sort_count = len(group) if len(group) != 0 else sort_count
+            self.unas_vrbls = self.unas_vrbls[0:len(self.unas_vrbls) - sort_bound] + sort_vrbls
+        return sort_count
 
 
 if __name__ == '__main__':

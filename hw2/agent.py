@@ -1,4 +1,4 @@
-import copy
+import time, copy
 from variable import Assigned_Variable
 from variable import Unassigned_Variable
 from board import Board
@@ -6,10 +6,10 @@ from node import Node
 
 
 class Agent():
-    def __init__(self, fc = True, mrv = False, dh = False, lcv = False):
+    def __init__(self, fc = True, mrv = False, heuristic = '', lcv = False):
         self.fc = fc
         self.mrv = mrv
-        self.dh = dh
+        self.heuristic = heuristic
         self.lcv = lcv
 
     def search(self, b):
@@ -17,7 +17,9 @@ class Agent():
         for j in range(b.size_y):
             for i in range(b.size_x):
                 if b.hints[i][j] == -1:
-                    unas_vrbls.append(Unassigned_Variable((i, j)))
+                    variable = Unassigned_Variable((i, j))
+                    variable.init_degree(b, self.heuristic)
+                    unas_vrbls.append(variable)
         
         root = Node([], copy.deepcopy(unas_vrbls), None)
 
@@ -28,7 +30,7 @@ class Agent():
             # Expand the deepest (most recent) unexpanded node
             cur_node = frontier.pop()
 
-            current = cur_node.board_status(b)
+            current = cur_node.board_status_string(b)
             if current in explorered_set:
                 continue
             explorered_set.append(current)
@@ -59,12 +61,22 @@ class Agent():
                 #     print(len(variable.domain), end=" ")
                 # print(sort_count)
                 # print()
-            if self.dh:
-                sort_count = cur_node.dh(sort_count, b)
+            if self.heuristic == 'degree':
+                sort_count = cur_node.degree_hrs(b, cur_node.last_sltd_vrbl, sort_count)
+            elif self.heuristic == 'space':                
+                sort_count = cur_node.space_hrs(b, cur_node.last_sltd_vrbl, sort_count)
             if self.lcv:
                 cur_node.lcv(sort_count)
             
                 
+            # for variable in cur_node.unas_vrbls:
+            #     print(len(variable.domain), end=" ")
+            # print()
+            # for variable in cur_node.unas_vrbls:
+            #     print(variable.degree, end=" ")
+            # print()
+            # print()
+
             sltd_vrbl = cur_node.unas_vrbls.pop()
 
             for value in sltd_vrbl.domain:
@@ -86,13 +98,17 @@ if __name__ == '__main__':
     
     # inputs_list = ['6 6 10 -1 -1 -1 1 1 -1 -1 3 -1 -1 -1 0 2 3 -1 3 3 2 -1 -1 2 -1 -1 -1 -1 2 2 3 -1 3 -1 1 -1 -1 -1 1']
     # inputs_list = ['6 6 10 -1 -1 -1 -1 -1 -1 -1 2 2 2 3 -1 -1 2 0 0 2 -1 -1 2 0 0 2 -1 -1 3 2 2 2 -1 -1 -1 -1 -1 -1 -1']
-    
-    a = Agent(mrv = True, dh = True)
+    start_time = time.time()
+
+    a = Agent(mrv = True, heuristic = 'space')
     for inputs in inputs_list:
         b = Board(inputs)
         result = a.search(b)
         if result != None:
             b.print_board(result.asgn_vrbls)
         print()
+
+    search_time = (time.time() - start_time) * 100
+    print(search_time)
 
         

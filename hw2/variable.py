@@ -11,6 +11,19 @@ class Unassigned_Variable(Variable):
     def __init__(self, position):
         super(Unassigned_Variable, self).__init__(position)
         self.domain = [0, 1]
+        self.degree = -1
+
+    def init_degree(self, b, heuristic):
+        if heuristic != '':
+            current = b.current_board()        
+            around = b.around_position(self.position)
+            degree = 0
+            for a in around:
+                if heuristic == 'degree' and current[a[0]][a[1]] > -1:
+                    degree += 1
+                elif heuristic == 'space' and current[a[0]][a[1]] == -1:
+                    degree += 1
+            self.degree = degree
 
 
 if __name__ == '__main__':
