@@ -29,4 +29,3 @@ class Unassigned_Variable(Variable):
 if __name__ == '__main__':
     pass
     
-    

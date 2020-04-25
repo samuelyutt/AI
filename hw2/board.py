@@ -120,4 +120,3 @@ if __name__ == '__main__':
     print(b.arc_consistent_check(variables, (5, 1)))
     print(b.arc_consistent_check(variables, (0, 0)))
 
-

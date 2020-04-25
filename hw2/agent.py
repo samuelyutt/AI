@@ -22,7 +22,7 @@ class Agent():
                     unas_vrbls.append(variable)
         
         # Create the root node
-        root = Node([], copy.deepcopy(unas_vrbls), None)
+        root = Node([], unas_vrbls, None)
 
         # Initial explored set and frontier
         # Frontier: stack
@@ -39,14 +39,14 @@ class Agent():
                 continue
             explorered_set.append(current)
 
-            # Return the node when solution is found
+            # Return assigned variables when solution is found
             # or skip this node if not consistent
             gcc, all_acc = cur_node.consistency_check(b)
             cc = gcc + all_acc
             if cc < 0:
                 continue
             elif cc == 0 and len(cur_node.unas_vrbls) == 0:
-                return cur_node
+                return cur_node.asgn_vrbls
             elif len(cur_node.unas_vrbls) == 0:
                 continue
 
@@ -102,10 +102,9 @@ if __name__ == '__main__':
         b = Board(inputs)
         result = a.search(b)
         if result != None:
-            b.print_board(result.asgn_vrbls)
+            b.print_board(result)
         print()
 
     search_time = (time.time() - start_time) * 100
     print(search_time)
 
-        

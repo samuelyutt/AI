@@ -17,6 +17,7 @@ class Node():
 
     def board_status_string(self, b):
         # Return the string of board status of this node
+        # Used for explored set
         status = []
         for i in range(b.size_x * b.size_y):
             status.append(9)
@@ -58,7 +59,7 @@ class Node():
         no_mine_pos = []
         check_pos = b.around_position(position)
 
-        # Find places that can only be mine or empty
+        # Find positions that can only be mine and positions that can not be mine
         for pos in check_pos:
             hint = b.hints[pos[0]][pos[1]]
             if hint > -1:
@@ -71,7 +72,7 @@ class Node():
                 elif upper_bound == hint:
                     is_mine_pos += b.around_position(pos)
         
-        # Remove values from the domain of varaibles whose position is in spaces found above
+        # Remove values from the domain of varaibles whose position is in positions found above
         if not fc_err:
             for variable in self.unas_vrbls:
                 pos = variable.position
@@ -150,9 +151,11 @@ class Node():
 
     def lcv(self, b):
         variable = self.unas_vrbls[-1]
+        
         # Only for variables whose domains are still [0 ,1]
         if len(variable.domain) == 2:
             limit_pos_counts = []
+            
             # Try both values
             for value in variable.domain:
                 new_asgn_vrbls = copy.deepcopy(self.asgn_vrbls)
@@ -209,3 +212,4 @@ if __name__ == '__main__':
         for i in range(b.size_x):
             if b.hints[i][j] == -1:
                 variables.append(Variable(i, j))
+
