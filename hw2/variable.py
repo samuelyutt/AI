@@ -8,12 +8,12 @@ class Assigned_Variable(Variable):
         self.assignment = assignment
 
 class Unassigned_Variable(Variable):
-    def __init__(self, position):
+    def __init__(self, position, b, heuristic):
         super(Unassigned_Variable, self).__init__(position)
         self.domain = [0, 1]
         self.degree = -1
 
-    def init_degree(self, b, heuristic):
+        # Initial value of degree if need
         if heuristic != '':
             current = b.current_board()        
             around = b.around_position(self.position)

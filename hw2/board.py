@@ -19,9 +19,11 @@ class Board():
                 idx += 1
 
     def available_position(self, position):
+        # Returns true if the given position is available on this board
         return 0 <= position[0] < self.size_x and 0 <= position[1] < self.size_y
 
     def around_position(self, position):
+        # Returns a list of available postions around the given position
         x = position[0]
         y = position[1]
         psb_pos = [(x-1, y-1), (x, y-1), (x+1, y-1), 
@@ -34,6 +36,7 @@ class Board():
         return around
 
     def current_board(self, asgn_vrbls = []):
+        # Return a list of current board status
         current = copy.deepcopy(self.hints)
         for variable in asgn_vrbls:
             x = variable.position[0]
@@ -45,6 +48,11 @@ class Board():
         return current
 
     def print_board(self, asgn_vrbls = []):
+        # Print the current board status
+        # _     : Unassigned
+        # |     : Assigned no mine
+        # *     : Assigned mine
+        # [0-8] : Hint
         current = self.current_board(asgn_vrbls)
         for j in range(self.size_y):
             for i in range(self.size_x):
@@ -55,6 +63,7 @@ class Board():
             print()
     
     def forward_checking_limit(self, asgn_vrbls, position):
+        # Returns lower and upper bounds of the sum of the given position
         current = self.current_board(asgn_vrbls)
         lower_bound = 0
         upper_bound = 0
@@ -68,6 +77,7 @@ class Board():
         return lower_bound, upper_bound
 
     def arc_consistent_check(self, asgn_vrbls, position):
+        # Returns difference of hint and mines count
         x = position[0]
         y = position[1]
         if not self.available_position(position):
@@ -86,6 +96,7 @@ class Board():
         return self.hints[x][y] - bombs_count
 
     def global_constraint_check(self, asgn_vrbls):
+        # Returns difference of tolal mines and current assigned mines count
         mines_count = 0
         for variable in asgn_vrbls:
             if variable.assignment == 1:
@@ -95,6 +106,7 @@ class Board():
 
 
 if __name__ == '__main__':
+    # Some examples
     inputs = '6 6 10 -1 -1 -1 1 1 -1 -1 3 -1 -1 -1 0 2 3 -1 3 3 2 -1 -1 2 -1 -1 -1 -1 2 2 3 -1 3 -1 1 -1 -1 -1 1'
     b = Board(inputs)
     
