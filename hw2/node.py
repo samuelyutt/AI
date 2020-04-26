@@ -44,14 +44,14 @@ class Node():
         # Check global constraint
         gcc_count = b.global_constraint_check(self.asgn_vrbls)
         if gcc_count < 0:
-            return -1, -1
+            return -1
 
         # Check all arc arc-consistent
         all_acc_count = self.all_arc_consistent_check(b)
         if all_acc_count < 0:
-            return -1, -2
+            return -2
 
-        return gcc_count, all_acc_count
+        return gcc_count + all_acc_count
 
     def forward_checking(self, b, position):
         fc_err = 0
@@ -152,15 +152,15 @@ class Node():
     def lcv(self, b):
         variable = self.unas_vrbls[-1]
         
-        # Only for variables whose domains are still [0 ,1]
+        # Only for variables whose domains are still [0, 1]
         if len(variable.domain) == 2:
             limit_pos_counts = []
+            domain = [0, 1]
             
             # Try both values
-            for value in variable.domain:
+            for value in domain:
                 new_asgn_vrbls = copy.deepcopy(self.asgn_vrbls)
                 new_asgn_vrbls.append(Assigned_Variable(variable.position, value))
-                new_unas_vrbls = copy.deepcopy(self.unas_vrbls)
                 new_board = b.current_board(new_asgn_vrbls)
 
                 # Foward check to calculate count of ruled out values

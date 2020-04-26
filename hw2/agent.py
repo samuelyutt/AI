@@ -6,8 +6,8 @@ from node import Node
 
 
 class Agent():
-    def __init__(self, fc = True, mrv = False, heuristic = '', lcv = False):
-        self.fc = fc
+    def __init__(self, forward_checking = False, mrv = False, heuristic = '', lcv = False):
+        self.fc = forward_checking
         self.mrv = mrv
         self.heuristic = heuristic
         self.lcv = lcv
@@ -34,20 +34,17 @@ class Agent():
             cur_node = frontier.pop()
 
             # Check and set explorered set
-            current = cur_node.board_status_string(b)
-            if current in explorered_set:
-                continue
-            explorered_set.append(current)
+            # current = cur_node.board_status_string(b)
+            # if current in explorered_set:
+            #     continue
+            # explorered_set.append(current)
 
             # Return assigned variables when solution is found
             # or skip this node if not consistent
-            gcc, all_acc = cur_node.consistency_check(b)
-            cc = gcc + all_acc
-            if cc < 0:
-                continue
-            elif cc == 0 and len(cur_node.unas_vrbls) == 0:
+            consistency = cur_node.consistency_check(b)
+            if consistency == 0 and len(cur_node.unas_vrbls) == 0:
                 return cur_node.asgn_vrbls
-            elif len(cur_node.unas_vrbls) == 0:
+            elif consistency < 0 or len(cur_node.unas_vrbls) == 0:
                 continue
 
             # Forward checking (Optional)
@@ -84,25 +81,26 @@ class Agent():
                 # Set frontier
                 frontier.append(child)
         
-        # Return None if no solution is found
-        return None
+        # Return empty list if no solution is found
+        return []
 
 
 if __name__ == '__main__':
     # Some examples and tests
-    inputs_list = ['6 6 10 -1 -1 -1 1 1 -1 -1 3 -1 -1 -1 0 2 3 -1 3 3 2 -1 -1 2 -1 -1 -1 -1 2 2 3 -1 3 -1 1 -1 -1 -1 1',
-                   '6 6 10 -1 -1 -1 1 1 1 3 4 -1 2 -1 -1 2 -1 -1 -1 -1 -1 -1 -1 2 2 -1 2 1 2 -1 -1 1 -1 -1 1 -1 1 0 -1',
-                   '6 6 10 -1 -1 -1 -1 -1 -1 -1 2 2 2 3 -1 -1 2 0 0 2 -1 -1 2 0 0 2 -1 -1 3 2 2 2 -1 -1 -1 -1 -1 -1 -1', 
-                   '6 6 10 -1 1 -1 1 1 -1 2 2 3 -1 -1 1 -1 -1 5 -1 5 -1 2 -1 5 -1 -1 -1 -1 2 -1 -1 3 -1 -1 -1 1 1 -1 0']
+    inputs_list = [
+                    '6 6 10 -1 -1 -1 1 1 -1 -1 3 -1 -1 -1 0 2 3 -1 3 3 2 -1 -1 2 -1 -1 -1 -1 2 2 3 -1 3 -1 1 -1 -1 -1 1',
+                    '6 6 10 -1 -1 -1 1 1 1 3 4 -1 2 -1 -1 2 -1 -1 -1 -1 -1 -1 -1 2 2 -1 2 1 2 -1 -1 1 -1 -1 1 -1 1 0 -1',
+                    '6 6 10 -1 -1 -1 -1 -1 -1 -1 2 2 2 3 -1 -1 2 0 0 2 -1 -1 2 0 0 2 -1 -1 3 2 2 2 -1 -1 -1 -1 -1 -1 -1', 
+                    '6 6 10 -1 1 -1 1 1 -1 2 2 3 -1 -1 1 -1 -1 5 -1 5 -1 2 -1 5 -1 -1 -1 -1 2 -1 -1 3 -1 -1 -1 1 1 -1 0',
+                  ]
     
     start_time = time.time()
 
-    a = Agent(fc = True, mrv = True, heuristic = 'space', lcv = False)
+    a = Agent(forward_checking = True, mrv = True, heuristic = '', lcv = True)
     for inputs in inputs_list:
         b = Board(inputs)
         result = a.search(b)
-        if result != None:
-            b.print_board(result)
+        b.print_board(result)
         print()
 
     search_time = (time.time() - start_time) * 100
