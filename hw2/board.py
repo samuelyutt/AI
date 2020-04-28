@@ -104,19 +104,3 @@ class Board():
 
         return self.mines_count - mines_count
 
-
-if __name__ == '__main__':
-    # Some examples
-    inputs = '6 6 10 -1 -1 -1 1 1 -1 -1 3 -1 -1 -1 0 2 3 -1 3 3 2 -1 -1 2 -1 -1 -1 -1 2 2 3 -1 3 -1 1 -1 -1 -1 1'
-    b = Board(inputs)
-    
-    variables = []
-    for j in range(b.size_y):
-        for i in range(b.size_x):
-            if b.hints[i][j] == -1:
-                variables.append(Variable(i, j))
-
-    b.print_board(variables)
-    print(b.arc_consistent_check(variables, (5, 1)))
-    print(b.arc_consistent_check(variables, (0, 0)))
-

@@ -25,7 +25,3 @@ class Unassigned_Variable(Variable):
                     degree += 1
             self.degree = degree
 
-
-if __name__ == '__main__':
-    pass
-    

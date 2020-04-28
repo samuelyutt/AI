@@ -24,20 +24,13 @@ class Agent():
         # Create the root node
         root = Node([], unas_vrbls, None)
 
-        # Initial explored set and frontier
+        # Initial frontier
         # Frontier: stack
-        explorered_set = []
         frontier = [root]
 
         while len(frontier):
             # Expand the deepest (most recent) unexpanded node
             cur_node = frontier.pop()
-
-            # Check and set explorered set
-            # current = cur_node.board_status_string(b)
-            # if current in explorered_set:
-            #     continue
-            # explorered_set.append(current)
 
             # Return assigned variables when solution is found
             # or skip this node if not consistent
@@ -96,7 +89,7 @@ if __name__ == '__main__':
     
     start_time = time.time()
 
-    a = Agent(forward_checking = True, mrv = True, heuristic = '', lcv = True)
+    a = Agent(forward_checking = True, mrv = True, heuristic = 'space', lcv = False)
     for inputs in inputs_list:
         b = Board(inputs)
         result = a.search(b)
