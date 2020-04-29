@@ -11,6 +11,7 @@ class Agent():
         self.mrv = mrv
         self.heuristic = heuristic
         self.lcv = lcv
+        
 
     def search(self, b):
         # Initial unassigned variables

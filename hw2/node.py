@@ -43,7 +43,7 @@ class Node():
     def consistency_check(self, b):
         # Check global constraint
         gcc_count = b.global_constraint_check(self.asgn_vrbls)
-        if gcc_count < 0:
+        if gcc_count < 0 or gcc_count > len(self.unas_vrbls):
             return -1
 
         # Check all arc arc-consistent
