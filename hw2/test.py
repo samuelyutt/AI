@@ -86,6 +86,8 @@ def gen_board(board_x, board_y, mines, hints):
     return board_inputs_string
 
 def algorithm_test(board_counts, board_x, board_y, mines, hints, agents):
+    print('=========================================================')
+    print('Algorithm Tests')
     print()
     print('Test with   :', board_counts, 'boards')
     print('Board size  :', board_x, '*', board_y)
@@ -109,8 +111,10 @@ def algorithm_test(board_counts, board_x, board_y, mines, hints, agents):
     print()
 
 def board_size_test(board_counts, min_board_size, max_board_size, agents):
+    print('=========================================================')
+    print('Board Size Tests')
     for a in agents:
-        print()
+        print('========')
         print('Test with       :', board_counts, 'boards per board size')
         print('Mines ratio     :', mines_ratio)
         print('Hints ratio     :', hints_ratio)
@@ -162,6 +166,6 @@ if __name__ == '__main__':
     
     
     # Tests
-    # algorithm_test(board_counts, board_x, board_y, mines, hints, agents)    
+    algorithm_test(board_counts, board_x, board_y, mines, hints, agents)    
     board_size_test(board_counts, min_board_size, max_board_size, agents)
-    
+

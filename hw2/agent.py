@@ -11,7 +11,7 @@ class Agent():
         self.mrv = mrv
         self.heuristic = heuristic
         self.lcv = lcv
-        
+
 
     def search(self, b):
         # Initial unassigned variables
@@ -97,6 +97,6 @@ if __name__ == '__main__':
         b.print_board(result)
         print()
 
-    search_time = (time.time() - start_time) * 100
+    search_time = (time.time() - start_time) * 1000
     print(search_time)
 
