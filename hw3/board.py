@@ -1,4 +1,4 @@
-import copy, random
+import copy, math, random
 
 
 class Board(object):
@@ -15,6 +15,7 @@ class Board(object):
         self.y = init_param['size'][1]
         self.mines = init_param['mines']
         self.hints = []
+        self.marked = []
         
         # Randomly generate a new board
         positions = []
@@ -22,24 +23,41 @@ class Board(object):
             for i in range(self.x):
                 positions.append((i, j))
         
-        # Select mine positions
-        mine_pos = random.sample(positions, self.mines)
+        # Select mine and initial safe positions
+        init_safe_cells = round(math.sqrt(self.x * self.y)) 
+        sltd_pos = random.sample(positions, self.mines + init_safe_cells)
+        mine_pos = sltd_pos[0:self.mines]
+        self.init_safe_pos = sltd_pos[self.mines:]
+        print(mine_pos)
+        print(self.init_safe_pos)
 
-        # 
-        for j in range(self.y):
-            for i in range(self.x):
-                if i == 0:
+        # Generate hints
+        for i in range(self.x):
+            for j in range(self.y):
+                if j == 0:
                     self.hints.append([])
+                    self.marked.append([])
                 if (i, j) in mine_pos:
-                    self.hints[j].append(-3)
+                    self.hints[i].append(-3)
                 else:
                     around = self.around_position((i, j))
                     mines_count = 0
                     for a in around:
                         if a in mine_pos:
                             mines_count += 1
-                    self.hints[j].append(mines_count)
+                    self.hints[i].append(mines_count)
+                self.marked[i].append(0)
                 
+    def query(self, position):
+        x = position[0]
+        y = position[1]
+        self.marked[x][y] = -2
+        return self.hints[x][y]
+
+    def mark_mine(self, position):
+        x = position[0]
+        y = position[1]
+        self.marked[x][y] = -3    
 
     def available_position(self, position):
         # Returns true if the given position is available on this board
@@ -58,31 +76,50 @@ class Board(object):
                 around.append(pos)
         return around
 
-    def current_board(self, asgn_vrbls = []):
-        # Return a list of current board status
-        current = copy.deepcopy(self.hints)
-        for variable in asgn_vrbls:
-            x = variable.position[0]
-            y = variable.position[1]
-            if variable.assignment == 0:
-                current[x][y] = -2
-            elif variable.assignment == 1:
-                current[x][y] = -3
-        return current
+    def around_unmarked_position(self, position):
+        # Returns a list of unmarked postions around the given position
+        around = self.around_position(position)
+        around_unmarked = []
+        for a in around:
+            if self.marked[a[0]][a[1]] == 0:
+                around_unmarked.append(a)
+        return around_unmarked
 
-    def print_board(self, asgn_vrbls = []):
+    def around_marked_mine_position(self, position):
+        # Returns a list of unmarked postions around the given position
+        around = self.around_position(position)
+        around_marked_mine = []
+        for a in around:
+            if self.marked[a[0]][a[1]] == -3:
+                around_marked_mine.append(a)
+        return around_marked_mine
+
+    def print_current_board(self):
         # Print the current board status
         # _     : Unassigned
         # |     : Assigned no mine
         # *     : Assigned mine
         # [0-8] : Hint
-        current = self.current_board(asgn_vrbls)
+        current = copy.deepcopy(self.marked)
         for j in range(self.y):
             for i in range(self.x):
-                current[i][j] = '_' if current[i][j] == -1 else current[i][j]
-                current[i][j] = '|' if current[i][j] == -2 else current[i][j]
+                current[i][j] = '_' if current[i][j] == 0 else current[i][j]
+                current[i][j] = self.hints[i][j] if current[i][j] == -2 else current[i][j]
                 current[i][j] = '*' if current[i][j] == -3 else current[i][j]
                 print(current[i][j], end=" ")
+            print()
+
+    def print_board(self):
+        # Print the original board
+        # *     : Mine
+        # [0-8] : Hint
+        board = copy.deepcopy(self.hints)
+        for j in range(self.y):
+            for i in range(self.x):
+                board[i][j] = '_' if board[i][j] == -1 else board[i][j]
+                board[i][j] = '|' if board[i][j] == -2 else board[i][j]
+                board[i][j] = '*' if board[i][j] == -3 else board[i][j]
+                print(board[i][j], end=" ")
             print()
 
 
