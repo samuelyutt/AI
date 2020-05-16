@@ -1,7 +1,13 @@
 import copy, math, random
 
 
-class Board(object):
+class Action:
+    def __init__(self, action, position = None):
+        self.action = action
+        self.position = position
+
+
+class Board():
     def __init__(self, difficulty):
         init_param = {}
         if 'easy' == difficulty:
@@ -28,8 +34,8 @@ class Board(object):
         sltd_pos = random.sample(positions, self.mines + init_safe_cells)
         mine_pos = sltd_pos[0:self.mines]
         self.init_safe_pos = sltd_pos[self.mines:]
-        print(mine_pos)
-        print(self.init_safe_pos)
+        # print(mine_pos)
+        # print(self.init_safe_pos)
 
         # Generate hints
         for i in range(self.x):
@@ -86,13 +92,25 @@ class Board(object):
         return around_unmarked
 
     def around_marked_mine_position(self, position):
-        # Returns a list of unmarked postions around the given position
+        # Returns a list of marked mine postions around the given position
         around = self.around_position(position)
         around_marked_mine = []
         for a in around:
             if self.marked[a[0]][a[1]] == -3:
                 around_marked_mine.append(a)
         return around_marked_mine
+
+    def check_success(self):
+        marked_count = 0
+        marked_mine_count = 0
+        current = copy.deepcopy(self.marked)
+        for j in range(self.y):
+            for i in range(self.x):
+                if current[i][j] != 0:
+                    marked_count += 1
+                if current[i][j] == -3:
+                    marked_mine_count += 1
+        return marked_count == self.x*self.y and marked_mine_count == self.mines
 
     def print_current_board(self):
         # Print the current board status
@@ -109,15 +127,13 @@ class Board(object):
                 print(current[i][j], end=" ")
             print()
 
-    def print_board(self):
-        # Print the original board
+    def print_answer_board(self):
+        # Print the answer board
         # *     : Mine
         # [0-8] : Hint
         board = copy.deepcopy(self.hints)
         for j in range(self.y):
             for i in range(self.x):
-                board[i][j] = '_' if board[i][j] == -1 else board[i][j]
-                board[i][j] = '|' if board[i][j] == -2 else board[i][j]
                 board[i][j] = '*' if board[i][j] == -3 else board[i][j]
                 print(board[i][j], end=" ")
             print()

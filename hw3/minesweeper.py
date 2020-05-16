@@ -1,24 +1,45 @@
-from board import Board
-from logic import Literal, Clause, CNF
+from board import Board, Action
+from logic import Literal, Clause
 from agent import Agent
-
+import time
 if __name__ == '__main__':
     b = Board('easy')
     a = Agent()
 
-    b.print_board()
-
     for pos in b.init_safe_pos:
         new_clause = Clause( [-Literal(pos)] )
-        if new_clause not in a.KB:
-            a.KB.append(new_clause)
-            
+        a.add_clause_to_KB(new_clause)
+
     while True:
-        query_pos = a.take_action(b)
-        new_hint = b.query(query_pos)
-        if new_hint == -3:
-            print('Fail on', query_pos)
-            break
-        a.new_hint(query_pos, new_hint, b)
         b.print_current_board()
         print()
+        # time.sleep(0.7)
+
+        action = a.take_action(b)
+        if 'query' == action.action:
+            new_hint = b.query(action.position)
+            if new_hint == -3:
+                print('Fail on', action.position)
+                break
+            a.new_hint(action.position, new_hint, b)
+        elif 'mark_mine' == action.action:
+            b.mark_mine(action.position)
+        elif 'done' == action.action:
+            break
+        elif 'give_up' == action.action:
+            print('Stucked')
+            # for c in a.KB:
+            #     print(c)
+            # print(a.KB0)
+            break
+    
+    print('====Result====')  
+    b.print_current_board()
+    print()
+    print('====Answer====')
+    b.print_answer_board()
+    print('==============')
+    if b.check_success():
+        print('Success')
+    else:
+        print('Fail')

@@ -22,11 +22,8 @@ class Clause():
     def __eq__(self, other):
         if not len(self.literals) == len(other.literals):
             return False
-        # print(self)
-        # print(other)
         for l in self.literals:
             if l not in other.literals:
-                # print(l)
                 return False
         return True
 
@@ -60,6 +57,9 @@ class Clause():
         for l in self.literals:
             ret += (' v ' + str(l)) if ret else str(l)
         return '(' + ret + ')'
+
+    def is_empty(self):
+        return len(self.literals) == 0
 
     def is_single_literal(self):
         if len(self.literals) == 1:
