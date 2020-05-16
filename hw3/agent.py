@@ -1,6 +1,6 @@
 import copy, itertools
 from board import Action, Board
-from logic import Literal, Clause, CNF
+from logic import Literal, Clause
 
 class Agent():
     def __init__(self):
@@ -22,9 +22,9 @@ class Agent():
                     is_useable = False
                 if new_clause > c:
                     self.KB.remove(c)
-            for c in self.KB0:
-                if new_clause <= c:
-                    is_useable = False
+            # for c in self.KB0:
+            #     if new_clause <= c:
+            #         is_useable = False
             if is_useable:
                 self.KB.append(new_clause)
 
@@ -103,12 +103,12 @@ class Agent():
         new_clause, co_literal_count = self.resolution(moved_clause, remain_clause)
         changed = False
         if co_literal_count:
-            self.KB.remove(remain_clause)
             changed = True
         if moved_clause.literals[0] in new_clause.literals:
             new_clause.literals.remove(moved_clause.literals[0])
             changed = True
         if changed:
+            self.KB.remove(remain_clause)
             self.add_clause_to_KB(new_clause)
 
 
@@ -166,6 +166,7 @@ class Agent():
                         return Action('mark_mine', clause.literals[0].position)
 
                     has_single_literal = True
+                    break
 
             # for c0 in self.KB0:
             #     for c in self.KB:
@@ -175,7 +176,7 @@ class Agent():
             #             continue
             #         elif tmp_clause > c:
             #             self.KB.remove(c)
-            #             self.KB.append(tmp_clause)
+            #             self.add_clause_to_KB(tmp_clause)
             #             continue
 
             if not has_single_literal:

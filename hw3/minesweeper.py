@@ -3,13 +3,13 @@ from logic import Literal, Clause
 from agent import Agent
 import time
 if __name__ == '__main__':
-    b = Board('easy')
+    b = Board('medium')
     a = Agent()
 
     for pos in b.init_safe_pos:
         new_clause = Clause( [-Literal(pos)] )
         a.add_clause_to_KB(new_clause)
-
+    start_time = time.time()
     while True:
         b.print_current_board()
         print()
@@ -28,9 +28,9 @@ if __name__ == '__main__':
             break
         elif 'give_up' == action.action:
             print('Stucked')
-            # for c in a.KB:
-            #     print(c)
-            # print(a.KB0)
+            for c in a.KB:
+                print(c)
+            print(a.KB0)
             break
     
     print('====Result====')  
@@ -43,3 +43,5 @@ if __name__ == '__main__':
         print('Success')
     else:
         print('Fail')
+    search_time = (time.time() - start_time)
+    print(search_time, 's')

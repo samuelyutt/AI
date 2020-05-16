@@ -44,6 +44,14 @@ class Clause():
                 return False
         return True
 
+    def __lt__(self, other):
+        if not len(other.literals) < len(self.literals):
+            return False
+        for l in other.literals:
+            if l not in self.literals:
+                return False
+        return True
+
     def __le__(self, other):
         if not len(other.literals) <= len(self.literals):
             return False
@@ -70,19 +78,6 @@ class Clause():
         if len(self.literals) == 1:
             return not self.literals[0].positive
         return False
-
-class CNF():
-    def __init__(self, clauses):
-        self.clauses = clauses
-
-    def __repr__(self):
-        ret = ''
-        for c in self.clauses:
-            ret += (', \n    ' + str(c)) if ret else str(c)
-        return ret
-
-    def __str__(self):
-        return self.__repr__()
 
 
 if __name__ == '__main__':

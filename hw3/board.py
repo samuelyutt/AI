@@ -13,7 +13,7 @@ class Board():
         if 'easy' == difficulty:
             init_param = {'size': (9, 9), 'mines': 10}
         elif 'medium' == difficulty:
-            init_param = {'size': (16, 16), 'mines': 25}
+            init_param = {'size': (16, 16), 'mines': 40}
         elif 'hard' == difficulty:
             init_param = {'size': (30, 16), 'mines': 99}
         
