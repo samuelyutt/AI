@@ -17,16 +17,25 @@ class Agent():
             
             # Check for identication and subsumption with all the clauses in KB
             is_useable = not (new_clause.is_empty())
+            reduntents = []
             for c in self.KB:
+                if not is_useable:
+                    break
                 if new_clause <= c:
                     is_useable = False
                 if new_clause > c:
-                    self.KB.remove(c)
-            # for c in self.KB0:
-            #     if new_clause <= c:
-            #         is_useable = False
+                    reduntents.append(c)
             if is_useable:
                 self.KB.append(new_clause)
+
+            for r in reduntents:
+                self.remove_clause_from_KB(r)
+
+    def remove_clause_from_KB(self, clause):
+        try:
+            self.KB.remove(clause)
+        except:
+            pass
 
     def new_hint(self, position, hint, b):
         # around_unmarked = b.around_position(position)
@@ -53,19 +62,21 @@ class Agent():
             # Generate CNF clauses and add them to the KB
             all_positive = list(itertools.combinations(around_unmarked, m-n+1))
             all_negative = list(itertools.combinations(around_unmarked, n+1))
-            
+            # print('new', position, hint, m, n)
             for comb in all_positive:
                 literals = []
                 for au in comb:
                     literals.append(Literal(au))
                 new_clause = Clause(literals)
                 self.add_clause_to_KB(new_clause)
+                # print(new_clause)
             for comb in all_negative:
                 literals = []
                 for au in comb:
                     literals.append(-Literal(au))
                 new_clause = Clause(literals)
                 self.add_clause_to_KB(new_clause)
+                # print(new_clause)
         else:
             # For debugging
             print('Something is wrong')
@@ -85,57 +96,64 @@ class Agent():
                 co_literal_count += 1
             elif literal not in new_clause.literals:
                 new_clause.literals.append(literal)
-
-
-
-
-        # new_clause = copy.deepcopy(clause_a)
-        # for l in clause_b.literals:
-        #     co_literal = -l
-        #     if co_literal in new_clause.literals:
-        #         new_clause.literals.remove(co_literal)
-        #         co_literal_count += 1
-        #     elif l not in new_clause.literals:
-        #         new_clause.literals.append(l)
         return new_clause, co_literal_count
     
     def remain_literals_matching(self, moved_clause, remain_clause):
-        new_clause, co_literal_count = self.resolution(moved_clause, remain_clause)
-        changed = False
-        if co_literal_count:
-            changed = True
-        if moved_clause.literals[0] in new_clause.literals:
-            new_clause.literals.remove(moved_clause.literals[0])
-            changed = True
-        if changed:
-            self.KB.remove(remain_clause)
-            self.add_clause_to_KB(new_clause)
+        # new_clause, co_literal_count = self.resolution(moved_clause, remain_clause)
+        # changed = False
+        # if co_literal_count:
+        #     changed = True
+        # if moved_clause.literals[0] in new_clause.literals:
+        #     new_clause.literals.remove(moved_clause.literals[0])
+        #     changed = True
+        # if changed:
+        #     self.remove_clause_from_KB(remain_clause)
+        #     self.add_clause_to_KB(new_clause)
+
+        reduntent_clause = None
+        add_clause = None
+        
+        literal = moved_clause.literals[0]
+        co_literal = -moved_clause.literals[0]
+
+        if co_literal in remain_clause.literals:
+            # print(1, moved_clause, remain_clause, co_literal)
+            new_clause = copy.deepcopy(remain_clause)
+            # self.remove_clause_from_KB(remain_clause)
+            reduntent_clause = remain_clause
+            new_clause.literals.remove(co_literal)
+            # self.add_clause_to_KB(new_clause)
+            add_clause = new_clause
+            # print(1, moved_clause, remain_clause, co_literal)
+        elif literal in remain_clause.literals:
+            # self.remove_clause_from_KB(remain_clause)
+            reduntent_clause = remain_clause
+            # print(2, moved_clause, remain_clause)
+
+        return reduntent_clause, add_clause
+
 
 
     def pairwise_matching(self, clause_a, clause_b):
         # Check for duplication or subsumption first
         # Keep only the more strict clause.
-        if clause_a in self.KB and clause_b in self.KB:
-            if clause_a <= clause_b:
-                self.KB.remove(clause_a)
-                return
-            elif clause_a >= clause_b:
-                self.KB.remove(clause_b)
-                return
+        if not (clause_a in self.KB and clause_b in self.KB):
+            return
+
+        if clause_a <= clause_b:
+            self.remove_clause_from_KB(clause_a)
+            return
+        elif clause_a >= clause_b:
+            self.remove_clause_from_KB(clause_b)
+            return
         
         # Do resolution
         new_clause, co_literal_count = self.resolution(clause_a, clause_b)
 
         if co_literal_count == 1:
             # Only one pair of complementary literals:
-            try:
-                self.KB.remove(clause_a)
-            except:
-                pass
-            try:
-                self.KB.remove(clause_b)
-            except:
-                pass
+            self.remove_clause_from_KB(clause_a)
+            self.remove_clause_from_KB(clause_b)
             self.add_clause_to_KB(new_clause)
         else:
             # No or more than one pairs of complementary literals
@@ -153,12 +171,23 @@ class Agent():
                     clause = c
 
                     # Move that clause to KB0
-                    self.KB.remove(clause)
+                    self.remove_clause_from_KB(clause)
                     self.KB0.append(clause)
                     
                     # Process the matching of that clause to all the remaining clauses in the KB
+                    reduntents = []
+                    adds = []
                     for remain_c in self.KB:
-                        self.remain_literals_matching(clause, remain_c)
+                        reduntent_clause, add_clause = self.remain_literals_matching(clause, remain_c)
+                        if reduntent_clause:
+                            reduntents.append(reduntent_clause)
+                        if add_clause:
+                            adds.append(add_clause)
+                    for r in reduntents:
+                        self.remove_clause_from_KB(r)
+                    for a in adds:
+                        self.add_clause_to_KB(a)
+
 
                     if clause.is_safe():
                         return Action('query', clause.literals[0].position)
@@ -166,16 +195,16 @@ class Agent():
                         return Action('mark_mine', clause.literals[0].position)
 
                     has_single_literal = True
-                    break
+
 
             # for c0 in self.KB0:
             #     for c in self.KB:
             #         tmp_clause, co_literal_count = self.resolution(c, c0)
             #         if c.is_empty():
-            #             self.KB.remove(c)
+            #             self.remove_clause_from_KB(c)
             #             continue
             #         elif tmp_clause > c:
-            #             self.KB.remove(c)
+            #             self.remove_clause_from_KB(c)
             #             self.add_clause_to_KB(tmp_clause)
             #             continue
 
