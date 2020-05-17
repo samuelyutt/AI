@@ -1,3 +1,4 @@
+import time
 import copy, itertools
 from board import Action, Board
 from logic import Literal, Clause
@@ -37,50 +38,59 @@ class Agent():
         except:
             pass
 
-    def new_hint(self, position, hint, b):
-        # around_unmarked = b.around_position(position)
-        # m = len(around_unmarked) 
-        # n = hint
+    def global_constraint(self, b):
+        # print('Appling global constraint')
+        unmarked, marked_mine = b.global_constraint_check()
+        # if len(unmarked) > 10 or b.mines - len(marked_mine) > 5:
+        #     print('Cannot apply global constraint')
+        # else:
+        self.gen_clause(unmarked, marked_mine, b.mines)
 
+    def new_hint(self, position, hint, b):
         around_unmarked = b.around_unmarked_position(position)
         around_marked_mine = b.around_marked_mine_position(position)
-        m = len(around_unmarked) 
-        n = hint - len(around_marked_mine)
+        self.gen_clause(around_unmarked, around_marked_mine, hint)
+        
+
+    def gen_clause(self, unmarked, marked_mine, hint):
+        m = len(unmarked) 
+        n = hint - len(marked_mine)
         
         if n == m:
             # Insert the m single-literal positive clauses to the KB
-            for au in around_unmarked:
+            for au in unmarked:
                 new_clause = Clause( [Literal(au)] )
                 self.add_clause_to_KB(new_clause)
         elif n == 0:
             # Insert the m single-literal negative clauses to the KB
-            for au in around_unmarked:
+            for au in unmarked:
                 new_clause = Clause( [-Literal(au)] )
                 self.add_clause_to_KB(new_clause)
         elif m > n > 0:
             # General cases
             # Generate CNF clauses and add them to the KB
-            all_positive = list(itertools.combinations(around_unmarked, m-n+1))
-            all_negative = list(itertools.combinations(around_unmarked, n+1))
-            # print('new', position, hint, m, n)
+            all_positive = list(itertools.combinations(unmarked, m-n+1))
+            all_negative = list(itertools.combinations(unmarked, n+1))
+
             for comb in all_positive:
                 literals = []
                 for au in comb:
                     literals.append(Literal(au))
                 new_clause = Clause(literals)
                 self.add_clause_to_KB(new_clause)
-                # print(new_clause)
+
             for comb in all_negative:
                 literals = []
                 for au in comb:
                     literals.append(-Literal(au))
                 new_clause = Clause(literals)
                 self.add_clause_to_KB(new_clause)
-                # print(new_clause)
+
         else:
             # For debugging
-            print('Something is wrong')
-            print(position, hint, m, n, len(around_unmarked), len(around_marked_mine))
+            # print('Something is wrong')
+            # print(position, hint, m, n, len(unmarked), len(marked_mine))
+            pass
 
     def resolution(self, clause_a, clause_b):
         co_literal_count = 0
@@ -99,17 +109,6 @@ class Agent():
         return new_clause, co_literal_count
     
     def remain_literals_matching(self, moved_clause, remain_clause):
-        # new_clause, co_literal_count = self.resolution(moved_clause, remain_clause)
-        # changed = False
-        # if co_literal_count:
-        #     changed = True
-        # if moved_clause.literals[0] in new_clause.literals:
-        #     new_clause.literals.remove(moved_clause.literals[0])
-        #     changed = True
-        # if changed:
-        #     self.remove_clause_from_KB(remain_clause)
-        #     self.add_clause_to_KB(new_clause)
-
         reduntent_clause = None
         add_clause = None
         
@@ -117,26 +116,20 @@ class Agent():
         co_literal = -moved_clause.literals[0]
 
         if co_literal in remain_clause.literals:
-            # print(1, moved_clause, remain_clause, co_literal)
             new_clause = copy.deepcopy(remain_clause)
-            # self.remove_clause_from_KB(remain_clause)
             reduntent_clause = remain_clause
             new_clause.literals.remove(co_literal)
-            # self.add_clause_to_KB(new_clause)
             add_clause = new_clause
-            # print(1, moved_clause, remain_clause, co_literal)
         elif literal in remain_clause.literals:
-            # self.remove_clause_from_KB(remain_clause)
             reduntent_clause = remain_clause
-            # print(2, moved_clause, remain_clause)
 
         return reduntent_clause, add_clause
-
-
 
     def pairwise_matching(self, clause_a, clause_b):
         # Check for duplication or subsumption first
         # Keep only the more strict clause.
+        if len(clause_a.literals) > 2 and len(clause_b.literals) > 2:
+            return
         if not (clause_a in self.KB and clause_b in self.KB):
             return
 
@@ -196,32 +189,24 @@ class Agent():
 
                     has_single_literal = True
 
-
-            # for c0 in self.KB0:
-            #     for c in self.KB:
-            #         tmp_clause, co_literal_count = self.resolution(c, c0)
-            #         if c.is_empty():
-            #             self.remove_clause_from_KB(c)
-            #             continue
-            #         elif tmp_clause > c:
-            #             self.remove_clause_from_KB(c)
-            #             self.add_clause_to_KB(tmp_clause)
-            #             continue
-
             if not has_single_literal:
                 # Apply pairwise matching of the clauses in the KB
                 # Only match clause pairs where one clause has only at most two literals  
                 tmp_KB = list(self.KB)
-                matching_clauses = []
-                for c in self.KB:
-                    if len(c.literals) <= 2:
-                        matching_clauses.append(c)
-                for comb in list(itertools.combinations(matching_clauses, 2)):
+                
+                for comb in list(itertools.combinations(self.KB, 2)):
                     if comb[0] in self.KB and comb[1] in self.KB:
                         self.pairwise_matching(comb[0], comb[1])
-                if tmp_KB == self.KB:
-                    return Action('give_up')
 
+                if tmp_KB == self.KB:
+                    # self.global_constraint(b)
+                    if tmp_KB == self.KB:
+                        return Action('give_up')
+
+            # if len(self.KB) == 0:
+            #     unmarked, marked_mine = global_constraint_check
+            #     if len(unmarked):
+            #         self.global_constraint(b)
 
         return Action('done')
                 

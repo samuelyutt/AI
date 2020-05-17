@@ -112,6 +112,18 @@ class Board():
                     marked_mine_count += 1
         return marked_count == self.x*self.y and marked_mine_count == self.mines
 
+    def global_constraint_check(self):
+        unmarked = []
+        marked_mine = []
+        current = copy.deepcopy(self.marked)
+        for j in range(self.y):
+            for i in range(self.x):
+                if current[i][j] == 0:
+                    unmarked.append((i, j))
+                elif current[i][j] == -3:
+                    marked_mine.append((i, j))
+        return unmarked, marked_mine
+
     def print_current_board(self):
         # Print the current board status
         # _     : Unassigned
