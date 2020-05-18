@@ -155,8 +155,13 @@ class Agent():
 
     def take_action(self, b):
         # Make a query
+        no_action_count = 0
+        
         while len(self.KB):
+            if no_action_count == 3:
+                return Action('give_up')
             has_single_literal = False
+            
             for c in self.KB:
                 if c.is_single_literal():
                     # Single-lateral clause in the KB
@@ -184,24 +189,29 @@ class Agent():
 
                     if clause.is_safe():
                         return Action('query', clause.literals[0].position)
+                        no_action_count = 0
                     else:
                         return Action('mark_mine', clause.literals[0].position)
+                        no_action_count = 0
 
                     has_single_literal = True
 
             if not has_single_literal:
+                no_action_count += 1
+
+                # tmp_KB = list(self.KB)
+
                 # Apply pairwise matching of the clauses in the KB
-                # Only match clause pairs where one clause has only at most two literals  
-                tmp_KB = list(self.KB)
-                
+                # Only match clause pairs where one clause has only at most two literals
                 for comb in list(itertools.combinations(self.KB, 2)):
                     if comb[0] in self.KB and comb[1] in self.KB:
                         self.pairwise_matching(comb[0], comb[1])
 
-                if tmp_KB == self.KB:
-                    # self.global_constraint(b)
-                    if tmp_KB == self.KB:
-                        return Action('give_up')
+                # if tmp_KB == self.KB:
+                #     # self.global_constraint(b)
+                #     if tmp_KB == self.KB:
+                #         return Action('give_up')
+
 
             # if len(self.KB) == 0:
             #     unmarked, marked_mine = global_constraint_check

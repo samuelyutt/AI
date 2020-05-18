@@ -80,5 +80,5 @@ class MineSweeper():
         return Result(status, stucked, play_time)
 
 if __name__ == '__main__':
-    game = MineSweeper('medium')
+    game = MineSweeper('hard')
     game.play(debug = True)

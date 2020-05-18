@@ -28,3 +28,4 @@ def simple_test(rounds, difficulty, show = False):
 if __name__ == '__main__':
     simple_test(1000, 'easy')
     simple_test(1000, 'medium')
+    simple_test(1000, 'hard')
