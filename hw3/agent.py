@@ -39,11 +39,7 @@ class Agent():
             pass
 
     def global_constraint(self, b):
-        # print('Appling global constraint')
         unmarked, marked_mine = b.global_constraint_check()
-        # if len(unmarked) > 10 or b.mines - len(marked_mine) > 5:
-        #     print('Cannot apply global constraint')
-        # else:
         self.gen_clause(unmarked, marked_mine, b.mines)
 
     def new_hint(self, position, hint, b):
@@ -51,7 +47,6 @@ class Agent():
         around_marked_mine = b.around_marked_mine_position(position)
         self.gen_clause(around_unmarked, around_marked_mine, hint)
         
-
     def gen_clause(self, unmarked, marked_mine, hint):
         m = len(unmarked) 
         n = hint - len(marked_mine)
@@ -156,7 +151,7 @@ class Agent():
     def take_action(self, b):
         # Make a query
         no_action_count = 0
-        
+
         while len(self.KB):
             if no_action_count == 3:
                 return Action('give_up')
@@ -198,7 +193,6 @@ class Agent():
 
             if not has_single_literal:
                 no_action_count += 1
-
                 # tmp_KB = list(self.KB)
 
                 # Apply pairwise matching of the clauses in the KB
@@ -219,7 +213,4 @@ class Agent():
             #         self.global_constraint(b)
 
         return Action('done')
-                
-
-
-        
+    

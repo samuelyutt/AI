@@ -81,6 +81,7 @@ class Clause():
 
 
 if __name__ == '__main__':
+    # Examples
     a = Literal((5, 3))
     b = -Literal((2, 4))
     c = Literal((6, 13))
@@ -90,14 +91,10 @@ if __name__ == '__main__':
     clause1 = Clause([a, b, c])
     clause2 = Clause([a, b, c, d])
     clause3 = Clause([a, b, c, d, e])
-
     clause4 = Clause([a, b, c, d, e])
-
-    # cnf = CNF([clause1, clause2, clause3])
 
     print(clause1 < clause2)
     print(clause3 < clause1)
     print(clause1 < clause2)
     print(clause1 < clause4)
     print(clause1 > clause4)
-    # print(cnf)

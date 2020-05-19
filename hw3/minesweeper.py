@@ -12,10 +12,10 @@ class Result():
 
 
 class MineSweeper():
-    def __init__(self, difficulty, debug = False):
-        self.board = Board(difficulty)
+    def __init__(self, difficulty, mines = None):
+        self.board = Board(difficulty, mines)
         self.agent = Agent()
-        self.debug = debug
+        self.debug = False
 
     def play(self, debug = None):
         if debug is not None:
@@ -60,6 +60,7 @@ class MineSweeper():
                 break
         
 
+        # Statistics
         play_time = (time.time() - start_time)
         if self.board.check_success():
             status = 'Success'
@@ -80,5 +81,6 @@ class MineSweeper():
         return Result(status, stucked, play_time)
 
 if __name__ == '__main__':
-    game = MineSweeper('hard')
+    # Examples
+    game = MineSweeper('easy')
     game.play(debug = True)

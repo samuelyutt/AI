@@ -8,14 +8,14 @@ class Action:
 
 
 class Board():
-    def __init__(self, difficulty):
+    def __init__(self, difficulty, mines = None):
         init_param = {}
         if 'easy' == difficulty:
-            init_param = {'size': (9, 9), 'mines': 10}
+            init_param = {'size': (9, 9), 'mines': mines if mines else 10}
         elif 'medium' == difficulty:
-            init_param = {'size': (16, 16), 'mines': 25}
+            init_param = {'size': (16, 16), 'mines': mines if mines else 25}
         elif 'hard' == difficulty:
-            init_param = {'size': (30, 16), 'mines': 75}
+            init_param = {'size': (30, 16), 'mines': mines if mines else 75}
         
         self.x = init_param['size'][0]
         self.y = init_param['size'][1]
@@ -154,5 +154,7 @@ class Board():
         
 
 if __name__ == '__main__':
+    # Examples
     b = Board('easy')
-    b.print_board()
+    b.print_answer_board()
+    
