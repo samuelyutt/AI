@@ -28,16 +28,47 @@ class Board():
             ret += '\n'
         return ret
 
+    def result(self):
+        black_movable = self.movable(1)
+        white_movable = self.movable(-1)
+        if len(black_movable) == 0 and len(white_movable) == 0:
+            black_count = 0
+            white_count = 0
+            for j in range(self.size_y):
+                for i in range(self.size_x):
+                    if self.status[i][j] == 1:
+                        black_count += 1
+                    elif self.status[i][j] == -1:
+                        white_count += 1
+            if black_count > white_count:
+                return 1
+            elif white_count > black_count:
+                return -1
+            else:
+                return 0
+        return -9
+
     def available_position(self, position):
         x = position[0]
         y = position[1]
         return 0 <= x < self.size_x and 0 <= y < self.size_y
 
-    def flip(self, flip_positions):
-        for f in flip_positions:
-            self.status[f[0]][f[1]] *= -1
+    def movable(self, side):
+        movable_list = []
+        for y in range(self.size_y):
+            for x in range(self.size_x):
+                if self.status[x][y] != 0:
+                    continue
+                flip_pos = self.flip_positions(side, (x, y))
+                if 0 < x < self.size_x-1 and 0 < y < self.size_y-1:
+                    movable_list.append((x, y))
+                else:
+                    if len(flip_pos) == 0:
+                        continue
+                    movable_list.append((x, y))
+        return movable_list
 
-    def flip_positions(self, player, position):
+    def flip_positions(self, side, position):
         flip_list = []
         x = position[0]
         y = position[1]
@@ -50,8 +81,7 @@ class Board():
             while True:
                 check_pos = (check_pos[0] + d[0], check_pos[1] + d[1])
                 if self.available_position(check_pos):
-                    available = self.status[check_pos[0]][check_pos[1]] * player
-                    # print(check_pos, available)
+                    available = self.status[check_pos[0]][check_pos[1]] * side
                     if available == 1:
                         flip_list += tmp_list
                         break
@@ -63,21 +93,23 @@ class Board():
                     break
         return flip_list
 
+    def flip(self, flip_positions):
+        for f in flip_positions:
+            self.status[f[0]][f[1]] *= -1
 
-
-    def move(self, player, position):
+    def move(self, side, position):
         x = position[0]
         y = position[1]
         if self.status[x][y] != 0:
             return -1
-        flip_pos = self.flip_positions(player, position)
+        flip_pos = self.flip_positions(side, position)
         if 0 < x < self.size_x-1 and 0 < y < self.size_y-1:
             self.flip(flip_pos)
         else:
             if len(flip_pos) == 0:
                 return -1
             self.flip(flip_pos)
-        self.status[x][y] = player
+        self.status[x][y] = side
         return 0
 
 if __name__ == '__main__':
