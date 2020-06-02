@@ -1,5 +1,5 @@
 from board import Board
-from agent import Agent, RandomAgent, Human
+from agent import Agent, RandomAgent, GreedyAgent, Human
 
 
 class Player():
@@ -34,16 +34,20 @@ class Othello():
         self.board.move(player.side, action)
 
     def terminate(self):
-        result = self.board.result()
-        if result == 1:
-            print(self.player_Black, 'wins')
-            return self.player_Black
-        elif result == -1:
-            print(self.player_White, 'wins')
-            return self.player_White
-        elif result == 0:
-            print('Tie')
-            return None
+        black_count, white_count, is_terminated = self.board.statistics()
+        result = black_count - white_count
+        if is_terminated:
+            print(self.player_Black, black_count)
+            print(self.player_White, white_count)
+            if result > 0:
+                print(self.player_Black, 'wins by', result)
+                return self.player_Black
+            elif result < 0:
+                print(self.player_White, 'wins by', -result)
+                return self.player_White
+            elif result == 0:
+                print('Tie')
+                return None
         else:
             print('Something is wrong')
             return None
@@ -69,7 +73,7 @@ class Othello():
 
 if __name__ == '__main__':
     agent1 = RandomAgent()
-    agent2 = RandomAgent()
+    agent2 = GreedyAgent()
 
     game = Othello(agent1, agent2)
     game.play()

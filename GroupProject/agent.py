@@ -20,6 +20,24 @@ class RandomAgent(Agent):
             action = random.choice(movable)
         return action
 
+class GreedyAgent(Agent):
+    def __init__(self, side = 0):
+        super(GreedyAgent, self).__init__(side)
+
+    def __str__(self):
+        return 'Greedy agent'
+
+    def take_action(self, b, movable):
+        action = None
+        flip_pos_count = -1
+        if len(movable):
+            for a in movable:
+                tmp = len(b.flip_positions(self.side, a))
+                if tmp > flip_pos_count:
+                    action = a
+                    flip_pos_count = tmp
+        return action
+
 class Human(Agent):
     def __init__(self, side = 0):
         super(Human, self).__init__(side)

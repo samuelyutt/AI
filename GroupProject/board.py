@@ -28,25 +28,18 @@ class Board():
             ret += '\n'
         return ret
 
-    def result(self):
+    def statistics(self):
         black_movable = self.movable(1)
         white_movable = self.movable(-1)
-        if len(black_movable) == 0 and len(white_movable) == 0:
-            black_count = 0
-            white_count = 0
-            for j in range(self.size_y):
-                for i in range(self.size_x):
-                    if self.status[i][j] == 1:
-                        black_count += 1
-                    elif self.status[i][j] == -1:
-                        white_count += 1
-            if black_count > white_count:
-                return 1
-            elif white_count > black_count:
-                return -1
-            else:
-                return 0
-        return -9
+        black_count = 0
+        white_count = 0
+        for j in range(self.size_y):
+            for i in range(self.size_x):
+                if self.status[i][j] == 1:
+                    black_count += 1
+                elif self.status[i][j] == -1:
+                    white_count += 1
+        return black_count, white_count, len(black_movable) == 0 and len(white_movable) == 0
 
     def available_position(self, position):
         x = position[0]
