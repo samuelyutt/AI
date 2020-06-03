@@ -28,9 +28,12 @@ class Board():
             ret += '\n'
         return ret
 
-    def statistics(self):
+    def is_over(self):
         black_movable = self.movable(1)
         white_movable = self.movable(-1)
+        return len(black_movable) == 0 and len(white_movable) == 0
+
+    def statistics(self):
         black_count = 0
         white_count = 0
         for j in range(self.size_y):
@@ -39,7 +42,7 @@ class Board():
                     black_count += 1
                 elif self.status[i][j] == -1:
                     white_count += 1
-        return black_count, white_count, len(black_movable) == 0 and len(white_movable) == 0
+        return black_count, white_count 
 
     def available_position(self, position):
         x = position[0]
@@ -91,6 +94,8 @@ class Board():
             self.status[f[0]][f[1]] *= -1
 
     def move(self, side, position):
+        if position is None:
+            return -1
         x = position[0]
         y = position[1]
         if self.status[x][y] != 0:

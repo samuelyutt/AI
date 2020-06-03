@@ -1,5 +1,6 @@
 from board import Board
-from agent import Agent, RandomAgent, GreedyAgent, Human
+from agent import Agent, RandomAgent, GreedyAgent, DullAgent, Human
+from MCTS import MCTSAgent
 
 
 class Player():
@@ -34,7 +35,8 @@ class Othello():
         self.board.move(player.side, action)
 
     def terminate(self):
-        black_count, white_count, is_terminated = self.board.statistics()
+        black_count, white_count = self.board.statistics()
+        is_terminated = self.board.is_over()
         result = black_count - white_count
         if is_terminated:
             print(self.player_Black, black_count)
@@ -64,16 +66,17 @@ class Othello():
                 self.apply_action(player, action)
                 stuck_count = 0
             else:
-                print(self.rounds, 'No move for', player)
+                print(self.rounds, 'No moves for', player)
                 stuck_count += 1
             if stuck_count == 2:
                 winner = self.terminate()
-                break;
+                return winner
 
 
 if __name__ == '__main__':
     agent1 = RandomAgent()
-    agent2 = GreedyAgent()
+    agent2 = MCTSAgent(200)
 
     game = Othello(agent1, agent2)
     game.play()
+
