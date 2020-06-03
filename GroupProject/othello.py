@@ -14,13 +14,14 @@ class Player():
 
 
 class Othello():
-    def __init__(self, agent_Black, agent_White):
+    def __init__(self, agent_Black, agent_White, print_mode = False):
         self.player_Black = Player(agent_Black, 1)
         self.player_White = Player(agent_White, -1)
         self.board = Board()
         self.rounds = 0
         self.player_Black.agent.side = 1
         self.player_White.agent.side = -1
+        self.print_mode = print_mode
 
     def take_turns(self):
         if self.rounds % 2 == 0:
@@ -31,7 +32,8 @@ class Othello():
         return player
 
     def apply_action(self, player, action):
-        print(player, 'on', action)
+        if self.print_mode:
+            print(player, 'on', action)
         self.board.move(player.side, action)
 
     def terminate(self):
@@ -39,34 +41,42 @@ class Othello():
         is_terminated = self.board.is_over()
         result = black_count - white_count
         if is_terminated:
-            print(self.player_Black, black_count)
-            print(self.player_White, white_count)
+            if self.print_mode:
+                print(self.player_Black, black_count)
+                print(self.player_White, white_count)
             if result > 0:
-                print(self.player_Black, 'wins by', result)
-                return self.player_Black
+                if self.print_mode:
+                    print(self.player_Black, 'wins by', result)
+                return self.player_Black.side
             elif result < 0:
-                print(self.player_White, 'wins by', -result)
-                return self.player_White
+                if self.print_mode:
+                    print(self.player_White, 'wins by', -result)
+                return self.player_White.side
             elif result == 0:
-                print('Tie')
-                return None
+                if self.print_mode:
+                    print('Tie')
+                return 0
         else:
-            print('Something is wrong')
+            if self.print_mode:
+                print('Something is wrong')
             return None
 
     def play(self):
         stuck_count = 0
         while True:
-            print(self.board)
+            if self.print_mode:
+                print(self.board)
             player = self.take_turns()
             movable = self.board.movable(player.side)
             if len(movable):
-                print(self.rounds, 'Playing:', player)
+                if self.print_mode:
+                    print(self.rounds, 'Playing:', player)
                 action = player.agent.take_action(self.board, movable)
                 self.apply_action(player, action)
                 stuck_count = 0
             else:
-                print(self.rounds, 'No moves for', player)
+                if self.print_mode:
+                    print(self.rounds, 'No moves for', player)
                 stuck_count += 1
             if stuck_count == 2:
                 winner = self.terminate()
@@ -74,9 +84,9 @@ class Othello():
 
 
 if __name__ == '__main__':
-    agent1 = RandomAgent()
-    agent2 = MCTSAgent(200)
+    agent1 = GreedyAgent()
+    agent2 = MCTSAgent(1000)
 
-    game = Othello(agent1, agent2)
+    game = Othello(agent1, agent2, print_mode = True)
     game.play()
 

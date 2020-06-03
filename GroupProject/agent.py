@@ -67,9 +67,10 @@ class Human(Agent):
         if len(movable):
             while True:
                 decision = input('Enter a position: ').split()
-                action = (int(decision[0]), int(decision[1]))
-                if action in movable:
-                    break
+                if len(decision) == 2:
+                    action = (int(decision[0]), int(decision[1]))
+                    if action in movable:
+                        break
                 print('Not an available move')
         return action
 
