@@ -69,8 +69,8 @@ class Board():
         x = position[0]
         y = position[1]
         directions = [(-1, -1), (0, -1), (1, -1), 
-                     (-1, 0),           (1, 0), 
-                     (-1, 1), (0, 1), (1, 1)]
+                      (-1, 0),           (1, 0), 
+                      (-1, 1),  (0, 1),  (1, 1)]
         for d in directions:
             tmp_list = []
             check_pos = (x, y)

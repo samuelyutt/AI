@@ -1,6 +1,5 @@
-import copy, math
+import copy, math, random
 from board import Board
-from agent import RandomAgent
 
 
 class Node():
@@ -35,7 +34,8 @@ class Node():
         return len(self.children) == 0
 
     def UCB_value(self, C = 1.4):
-        return self.Q / self.N + C * math.sqrt(2 * math.log(self.parent.N) / self.N) if self.N else 0.0
+        # return self.Q / self.N + C * math.sqrt(2 * math.log(self.parent.N) / self.N) if self.N else 9999.9
+        return self.Q / self.N + C * math.sqrt(math.log(self.parent.N) / self.N) if self.N else 9999.9
 
     def select(self, C = 1.4):
         max_UCB_value = None
@@ -67,12 +67,11 @@ class Node():
     def rollout(self):
         tmp_board = copy.deepcopy(self.board)
         side = self.tmp_side
-        agent = RandomAgent(side)
         stuck_count = 0
         while True:
             movable = tmp_board.movable(side)
             if len(movable):
-                action = agent.take_action(tmp_board, movable)
+                action = random.choice(movable)
                 tmp_board.move(side, action)
                 stuck_count = 0
             else:
