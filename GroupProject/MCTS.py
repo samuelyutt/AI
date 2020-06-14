@@ -1,4 +1,4 @@
-import copy
+import copy, time
 from node import Node
 from agent import Agent
 from board import Board
@@ -14,7 +14,9 @@ class MCTSAgent(Agent):
         return 'MCTS agent (' + str(self.iteration_count) + ')'
 
     def iteration(self, root):
-        for _ in range(self.iteration_count):
+        start = time.time()
+        # for _ in range(self.iteration_count):
+        while time.time() - start < 4.6:
             rollout_node = self.selection2(root) if self.type == 2 else self.selection(root)
             result = self.simulation(rollout_node)
             self.backpropagation(rollout_node, result)

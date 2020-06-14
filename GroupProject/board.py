@@ -1,5 +1,5 @@
 class Board():
-    def __init__(self):
+    def __init__(self, board = []):
         self.size_x = 8
         self.size_y = 8
         self.status = [[9, 0, 0, 0, 0, 0, 0, 9],
@@ -10,6 +10,14 @@ class Board():
                        [0, 0, 0, 0, 0, 0, 0, 0],
                        [0, 0, 0, 0, 0, 0, 0, 0],
                        [9, 0, 0, 0, 0, 0, 0, 9]]
+        if board:
+            for i in range(8):
+                for j in range(8):
+                    self.status[i][j] = board[j][i] if board[j][i] != 2 else -1
+            self.status[0][0] = 9
+            self.status[0][7] = 9
+            self.status[7][0] = 9
+            self.status[7][7] = 9
 
     def __str__(self):
         ret = '  0 1 2 3 4 5 6 7\n'
