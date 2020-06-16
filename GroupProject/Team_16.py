@@ -25,7 +25,7 @@ def GetStep(board, is_black):
     my_side = 1 if is_black else -1
     current_board = Board(board)
     movable = current_board.movable(my_side)
-    my_step = MCTSAgent().take_action(current_board, movable)
+    my_step = MCTSAgent(side=my_side).take_action(current_board, movable)
     return (my_step[1], my_step[0])
 
 

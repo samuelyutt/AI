@@ -63,10 +63,10 @@ class Board():
             for x in range(self.size_x):
                 if self.status[x][y] != 0:
                     continue
-                flip_pos = self.flip_positions(side, (x, y))
                 if 0 < x < self.size_x-1 and 0 < y < self.size_y-1:
                     movable_list.append((x, y))
                 else:
+                    flip_pos = self.flip_positions(side, (x, y))
                     if len(flip_pos) == 0:
                         continue
                     movable_list.append((x, y))

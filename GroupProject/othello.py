@@ -84,9 +84,10 @@ class Othello():
 
 
 if __name__ == '__main__':
-    agent1 = MCTSAgent(500)
+    agent1 = MCTSAgent(500, type_=1)
+    agent2 = MCTSAgent(500, type_=2)
     # agent1 = GreedyAgent()
-    agent2 = RandomAgent()
+    # agent2 = Human()
     # agent1 = MCTSAgent(1000, type_=1)
     # agent1 = RandomAgent()
     # agent2 = MCTSAgent(900, type_=2)
