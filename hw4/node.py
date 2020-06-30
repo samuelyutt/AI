@@ -25,16 +25,19 @@ class Node():
         ret += str(self.threshold_value) + '\n'
         return ret
 
-    def predict(self):
-        prediction = None
-
+    def stats(self, data):
         stats = {}
-        for row in self.data:
+        for row in data:
             if row[self.target_attr] in stats:
                 stats[ row[self.target_attr] ] += 1
             else:
                 stats[ row[self.target_attr] ] = 1
+        return stats
 
+    def predict(self):
+        prediction = None
+
+        stats = self.stats(self.data)
         max_count = -1
         for target in stats:
             if stats[target] > max_count:
@@ -47,13 +50,7 @@ class Node():
         if data_count == 0:
             return 0
         
-        stats = {}
-        for row in data:
-            if row[self.target_attr] in stats:
-                stats[ row[self.target_attr] ] += 1
-            else:
-                stats[ row[self.target_attr] ] = 1
-        
+        stats = self.stats(data)
         probabilities = []
         for target in stats:
             probabilities.append(stats[target] / data_count)
@@ -97,7 +94,6 @@ class Node():
                 values.append(row[key])
             values.sort()
 
-            
             for value in values:
                 tmp_info_gain = total_value - self.remainder(key, value)
                 if threshold is None or tmp_info_gain > info_gain:
@@ -110,6 +106,7 @@ class Node():
     def split(self, total_value):
         threshold, threshold_value = self.select_threshold(total_value)
         lt_value_data, ge_value_data = self.split_data_by_value(threshold, threshold_value)
+        self.data = None
         self.action = 'catagorize'
         self.threshold = threshold
         self.threshold_value = threshold_value
