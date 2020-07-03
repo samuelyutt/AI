@@ -6,7 +6,7 @@ datasets = {'iris':         {'target_attr': 4, 'valid_attrs': [i for i in range(
             'glass':        {'target_attr': 10, 'valid_attrs': [i for i in range(1, 10)]},
             'ionosphere':   {'target_attr': 34, 'valid_attrs': [i for i in range(0, 34)]},
             'wine':         {'target_attr': 0, 'valid_attrs': [i for i in range(1, 14)]},
-            }
+           }
 
 def data_reader(dataset_name):
     dataset = datasets[dataset_name]
@@ -65,7 +65,6 @@ def test(test_data, target_attr, forest, print_mode=False):
                 votes[ prediction ] += 1
             else:
                 votes[ prediction ] = 1
-        # print(votes)
         
         final_decision = None
         max_vote = -1
@@ -211,6 +210,7 @@ def test_data_propotion_test(dataset_name, trees_count, selected_attrs_count=Non
             accuracies.append(accuracy)
         print('{}\t{}'.format(test_data_proportion, statistics.mean(accuracies)))
 
+
 def total_value_limit_test(dataset_name, trees_count, selected_attrs_count=None, test_count=10):
     total_value_limits = [1.0, 0.5, 0.1, 0.05, 0.01, 0.005, 0.0001]
     test_data_proportion = 0.3
@@ -235,7 +235,6 @@ def total_value_limit_test(dataset_name, trees_count, selected_attrs_count=None,
             accuracy = simple_test(trees_count, selected_attrs_count, train_data, test_data, target_attr, valid_attrs, total_value_limit)
             accuracies.append(accuracy)
         print('{}\t{}'.format(total_value_limit, statistics.mean(accuracies)))
-
 
 
 def main():
@@ -267,8 +266,6 @@ def main():
         total_value_limit_test(dataset, 10)
         print()
     print('\n++++++++++++++++++++++++++++\n')
-
-
 
 
 if __name__ == '__main__':

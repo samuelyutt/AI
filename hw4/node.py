@@ -17,12 +17,12 @@ class Node():
 
         total_value = self.gini_index(data=self.data)
         if total_value < total_value_limit or depth > 100:
-            # print('predict')
+            # Decision node
             self.action = 'predict'
             self.prediction = self.make_prediction()
             self.data = None
         else:
-            # print('split')
+            # Spilt node
             self.split(total_value)
 
     def __str__(self):
@@ -34,6 +34,7 @@ class Node():
         return ret
 
     def stats(self, data):
+        # Calculate counts of each target appears in data
         stats = {}
         for row in data:
             if row[self.target_attr] in stats:
@@ -45,6 +46,7 @@ class Node():
     def make_prediction(self):
         prediction = None
 
+        # Check which target appears the most in data
         stats = self.stats(self.data)
         max_count = -1
         for target in stats:
@@ -94,6 +96,7 @@ class Node():
         threshold = None
         threshold_value = None
 
+        # Random select a threshold
         key = random.choice(self.selected_attrs)
         threshold = key
 
@@ -103,6 +106,7 @@ class Node():
         values.sort()
         values.remove(values[0])
 
+        # Select the best partition value
         for value in values:
             tmp_info_gain = total_value - self.remainder(key, value)
             if info_gain is None or tmp_info_gain > info_gain:
@@ -116,6 +120,7 @@ class Node():
         threshold = None
         threshold_value = None
 
+        # Select the best threshold and partition value
         for key in self.selected_attrs:
             values = []
             for row in self.data:
@@ -133,17 +138,25 @@ class Node():
         return threshold, threshold_value
 
     def split(self, total_value):
+        # Select threshold and partition value
         threshold, threshold_value = self.select_threshold(total_value)
         # threshold, threshold_value = self.random_select_threshold(total_value)
+        
+        # Split the data for child node
         lt_value_data, ge_value_data = self.split_data_by_value(threshold, threshold_value)
         self.data = None
+        
+        # Define action
         self.action = 'catagorize'
+
+        # Create child nodes
         self.threshold = threshold
         self.threshold_value = threshold_value
         self.lt_value_child = Node(lt_value_data, self.target_attr, self.selected_attrs, self.depth+1, self.total_value_limit)
         self.ge_value_child = Node(ge_value_data, self.target_attr, self.selected_attrs, self.depth+1, self.total_value_limit)
 
     def visit(self, test_data_item):
+        # When test data visits
         if self.action == 'predict':
             return self.prediction
         else:
