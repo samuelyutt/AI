@@ -1,3 +1,6 @@
+import random
+
+
 class Node():
     def __init__(self, data, target_attr, selected_attrs, depth=0, total_value_limit=0.01):
         self.action = None
@@ -86,6 +89,28 @@ class Node():
                 ge_value_data.append(row)
         return lt_value_data, ge_value_data
 
+    def random_select_threshold(self, total_value):
+        info_gain = None
+        threshold = None
+        threshold_value = None
+
+        key = random.choice(self.selected_attrs)
+        threshold = key
+
+        values = []
+        for row in self.data:
+            values.append(row[key])
+        values.sort()
+        values.remove(values[0])
+
+        for value in values:
+            tmp_info_gain = total_value - self.remainder(key, value)
+            if info_gain is None or tmp_info_gain > info_gain:
+                info_gain = tmp_info_gain
+                threshold_value = value
+
+        return threshold, threshold_value
+
     def select_threshold(self, total_value):
         info_gain = None
         threshold = None
@@ -109,6 +134,7 @@ class Node():
 
     def split(self, total_value):
         threshold, threshold_value = self.select_threshold(total_value)
+        # threshold, threshold_value = self.random_select_threshold(total_value)
         lt_value_data, ge_value_data = self.split_data_by_value(threshold, threshold_value)
         self.data = None
         self.action = 'catagorize'
