@@ -131,6 +131,11 @@ def datasets_test(test_count=10):
             accuracy = simple_test(1, len(valid_attrs), train_data, test_data, target_attr, valid_attrs, total_value_limit)
             accuracies.append(accuracy)
         print('{}\t{}'.format(dataset_name, statistics.mean(accuracies)))
+        for _ in range(test_count):
+            train_data, test_data = data_processor(dataset, test_data_proportion)
+            accuracy = simple_test(1, len(valid_attrs), train_data, train_data, target_attr, valid_attrs, total_value_limit)
+            accuracies.append(accuracy)
+        print('{}\t{}'.format(dataset_name, statistics.mean(accuracies)))
 
 
 def trees_count_test(dataset_name, max_trees_count, selected_attrs_count=None, test_count=10):
